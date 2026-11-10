@@ -8,7 +8,7 @@
 <!-- 點數卡短網址轉址頁：只把合格的卡片代碼（12 碼，無 0 1 I L O）轉到學校系統，不收集任何資料 -->
 <script>
 (function () {
-  var APP = 'https://script.google.com/macros/s/AKfycbzMd88CNUlmotpBvWcKBGiLUavA6ExPa9esKmLd2raa5lHRLQ8DtJOWq37LYYvsAGBs/exec';
+  var APP = 'https://scott-tw.github.io/pb/s/';
   var m = location.search.match(/[?&]k=([23456789ABCDEFGHJKMNPQRSTUVWXYZ]{12})(?:&|$)/i);
   location.replace(APP + (m ? '?k=' + m[1].toUpperCase() : ''));
 })();
