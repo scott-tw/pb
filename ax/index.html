@@ -1,0 +1,1292 @@
+<!-- 由 國際交流系統/統一網站/tools/產生前台頁.js 自動產生，請勿直接修改 -->
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>安平國小國際交流網站</title>
+<script>
+// 以背景 POST 取代 google.script.run（只開放前台 API_FNS 列出的函式，由 Apps Script 端檢查）
+(function () {
+  var API = "https://script.google.com/macros/s/AKfycbwOvyAIuVUJg7WitcQ4d0HEYgy_HKcfiTgsYChoyph7BwESW3hVFoaIWBcFLAtYpCNU/exec";
+  function call(fn, args, ok, bad) {
+    fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn: fn, args: args }), redirect: 'follow', credentials: 'omit' })
+      .then(function (r) { return r.json(); })
+      .then(function (o) { if (o && o.ok) { if (ok) ok(o.val); } else if (bad) bad(new Error((o && o.err) || '系統忙碌中，請稍後再試。')); })
+      .catch(function () { if (bad) bad(new Error('連線失敗，請檢查網路後再試一次。')); });
+  }
+  function mk(ok, bad) {
+    return new Proxy({}, { get: function (t, k) {
+      if (k === 'withSuccessHandler') return function (f) { return mk(f, bad); };
+      if (k === 'withFailureHandler') return function (f) { return mk(ok, f); };
+      return function () { call(k, Array.prototype.slice.call(arguments), ok, bad); };
+    } });
+  }
+  window.google = { script: { run: mk(null, null) } };
+})();
+</script>
+<style>
+  :root { --bg:#f4f1ec; --card:#fff; --ink:#3d3a36; --muted:#7a746c; --line:#e6e1d9;
+    --real:#b56555; --real-l:#f3e4df; --online:#5f7f99; --online-l:#e2eaf1;
+    --s:#7d9a7e; --p:#b98a8e; --t:#6f86a0; --ok:#5b8a5e; --bad:#b5524a; --role:#6f86a0; }
+  body.r-s { --role:var(--s); } body.r-p { --role:var(--p); } body.r-t { --role:var(--t); }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif; font-size:17px; line-height:1.65; }
+  header { background:linear-gradient(100deg,var(--real),var(--online)); color:#fff; padding:16px; }
+  .hwrap { max-width:960px; margin:0 auto; display:flex; align-items:center; gap:12px; }
+  header h1 { margin:0; font-size:22px; letter-spacing:1px; flex:1; line-height:1.3; }
+  header h1 small { display:block; font-size:14px; font-weight:normal; opacity:.9; letter-spacing:0; }
+  .hbtn { background:rgba(255,255,255,.18); color:#fff; border:1px solid rgba(255,255,255,.6); border-radius:20px; padding:6px 14px; font:inherit; font-size:15px; cursor:pointer; white-space:nowrap; }
+  main { max-width:960px; margin:0 auto; padding:14px 16px 30px; }
+  .card { background:var(--card); border-radius:14px; padding:18px; margin-bottom:14px; box-shadow:0 1px 3px rgba(0,0,0,.05); }
+  h2 { font-size:20px; margin:0 0 8px; } h3 { font-size:17px; margin:14px 0 6px; }
+  .muted { color:var(--muted); font-size:15px; }
+  .intro { white-space:pre-wrap; }
+  .years { display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; margin:4px 0 12px; }
+  .years button { flex:0 0 auto; border:1px solid var(--line); background:#fff; border-radius:20px; padding:6px 16px; font:inherit; font-size:15px; cursor:pointer; color:var(--ink); }
+  .years button.on { background:var(--ink); color:#fff; border-color:var(--ink); }
+  .act { border-left:6px solid var(--real); }
+  .act.o { border-left-color:var(--online); }
+  .tag { display:inline-block; font-size:13px; padding:1px 10px; border-radius:12px; color:#fff; background:var(--real); vertical-align:middle; }
+  .tag.o { background:var(--online); } .tag.g { background:#9a948c; }
+  .days { display:grid; gap:8px; margin-top:8px; }
+  .day { background:var(--real-l); border-radius:10px; padding:8px 12px; font-size:15px; }
+  .day b { margin-right:6px; }
+  .photos { display:grid; grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); gap:6px; margin-top:8px; }
+  .photos img { width:100%; aspect-ratio:1; object-fit:cover; border-radius:8px; background:#eee; cursor:pointer; display:block; }
+  .lb { position:fixed; inset:0; background:rgba(0,0,0,.85); display:none; align-items:center; justify-content:center; flex-direction:column; z-index:30; padding:12px; }
+  .lb img { max-width:100%; max-height:80vh; border-radius:6px; }
+  .lb p { color:#fff; margin:10px 0 0; }
+  .btn { font:inherit; padding:10px 16px; border-radius:10px; border:1px solid #c9c2b8; background:#fff; cursor:pointer; }
+  .btn.pr { background:var(--role); color:#fff; border-color:var(--role); }
+  .roles { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:10px 0; }
+  .roles button { font:inherit; padding:16px 6px; border-radius:12px; border:none; color:#fff; cursor:pointer; font-size:18px; }
+  .roles .s { background:var(--s); } .roles .p { background:var(--p); } .roles .t { background:var(--t); }
+  label.f { display:block; margin:10px 0; } label.f span { display:block; font-size:15px; color:var(--muted); }
+  select, input { font:inherit; padding:9px 10px; border:1px solid #c9c2b8; border-radius:8px; width:100%; background:#fff; }
+  .err { color:var(--bad); min-height:1.5em; }
+  dialog { border:none; border-radius:16px; padding:20px; width:94%; max-width:420px; }
+  dialog::backdrop { background:rgba(0,0,0,.4); }
+  .mine .act { cursor:default; }
+  .hidden { display:none !important; }
+  footer { text-align:center; color:var(--muted); font-size:13px; padding:20px 16px 30px; }
+  .rolebar { background:var(--role); color:#fff; border-radius:12px; padding:10px 14px; margin-bottom:14px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .rolebar b { flex:1; }
+  .rolebar button { background:rgba(255,255,255,.2); color:#fff; border:1px solid rgba(255,255,255,.6); border-radius:16px; padding:4px 12px; font:inherit; font-size:14px; cursor:pointer; }
+  .test { background:#fff8e1; border:1px dashed #d8b65a; }
+  #busy { position:fixed; left:50%; bottom:22px; transform:translateX(-50%); background:#333; color:#fff; padding:8px 16px; border-radius:20px; font-size:15px; display:none; z-index:40; }
+</style>
+</head>
+<body>
+<header><div class="hwrap">
+  <h1 id="hTitle">安平國小國際交流網站<small id="hSchool">臺南市安平區安平國民小學</small></h1>
+  <button class="hbtn" id="btnLogin" onclick="openLogin()">登入</button>
+</div></header>
+
+<main>
+  <div id="mine" class="hidden mine"></div>
+  <div id="actView" class="hidden"></div>
+
+  <div id="home">
+    <div class="card" id="introCard">
+      <h2>安平國小國際教育</h2>
+      <div class="intro" id="intro"><span class="muted">讀取中…</span></div>
+    </div>
+    <div class="years" id="years"></div>
+    <div id="acts"></div>
+  </div>
+
+
+
+</main>
+<style>
+  .tabs { display:flex; gap:6px; margin:0 0 12px; overflow-x:auto; }
+  .tabs button { flex:1 0 auto; font:inherit; font-size:16px; padding:9px 12px; border-radius:10px; border:1px solid var(--line); background:#fff; color:var(--ink); cursor:pointer; }
+  .tabs button.on { background:var(--role); color:#fff; border-color:var(--role); }
+  .dayh { font-weight:bold; margin:16px 0 6px; color:var(--real); }
+  .task { background:#fff; border-radius:12px; padding:12px 14px; margin-bottom:8px; box-shadow:0 1px 2px rgba(0,0,0,.05); }
+  .task .tt { display:flex; gap:8px; align-items:flex-start; }
+  .task .tt div { flex:1; }
+  .task .meta { font-size:14px; color:var(--muted); }
+  .badge { display:inline-block; font-size:12px; padding:0 8px; border-radius:10px; background:#eee; color:var(--ink); margin-left:4px; vertical-align:middle; }
+  .badge.req { background:var(--real-l); color:var(--real); }
+  .badge.ok { background:#e3efe3; color:var(--ok); } .badge.wait { background:#fbecd6; color:#a26a14; } .badge.hid { background:#e7e3de; color:#7a746c; }
+  .sbtn { font:inherit; font-size:15px; padding:6px 12px; border-radius:8px; border:1px solid var(--role); color:var(--role); background:#fff; cursor:pointer; white-space:nowrap; }
+  .sbtn.pr { background:var(--role); color:#fff; }
+  .sbtn.bad { border-color:var(--bad); color:var(--bad); }
+  .work { background:#fff; border-radius:12px; padding:12px 14px; margin-bottom:10px; box-shadow:0 1px 2px rgba(0,0,0,.05); }
+  .work dl { margin:6px 0 0; font-size:15px; } .work dt { color:var(--muted); font-size:13px; } .work dd { margin:0 0 4px; white-space:pre-wrap; }
+  .thumbs { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
+  .thumbs img, .thumbs .vt { width:84px; height:84px; object-fit:cover; border-radius:8px; background:#eee; cursor:pointer; }
+  .vt, .vtile { display:flex; align-items:center; justify-content:center; background:#4a4540 !important; color:#fff; font-size:26px; cursor:pointer; }
+  .comment { background:#eef3f8; border-radius:8px; padding:6px 10px; margin-top:6px; font-size:15px; }
+  .agrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(105px,1fr)); gap:6px; }
+  .agrid .it { position:relative; }
+  .agrid img, .agrid .vtile { width:100%; aspect-ratio:1; object-fit:cover; border-radius:8px; background:#eee; display:block; cursor:pointer; }
+  .agrid .flag { position:absolute; left:4px; top:4px; font-size:11px; background:rgba(0,0,0,.55); color:#fff; padding:0 6px; border-radius:8px; }
+  .warn { background:#fbecd6; border-radius:10px; padding:8px 12px; font-size:15px; margin-bottom:10px; }
+  .stu { display:flex; align-items:center; gap:8px; padding:10px 4px; border-bottom:1px solid var(--line); cursor:pointer; }
+  .stu b { flex:1; font-weight:normal; }
+  textarea { font:inherit; padding:8px 10px; border:1px solid #c9c2b8; border-radius:8px; width:100%; min-height:60px; }
+  .prog { height:8px; background:#eee; border-radius:4px; overflow:hidden; margin:8px 0; } .prog i { display:block; height:100%; width:0; background:var(--role); transition:width .2s; }
+  dialog.wide { max-width:560px; max-height:92vh; }
+  .lb video { max-width:100%; max-height:80vh; }
+</style>
+<script>
+var ACT = null, TAB = '', VCACHE = {};
+var STATE_BADGE = { '完成': 'ok', '待補文字': 'wait', '隱藏': 'hid' };
+var SIX = [['when', '何時'], ['where', '何地'], ['who', '何人'], ['what', '何事'], ['why', '為何'], ['how', '如何'], ['find', '我的發現']];
+
+function gasP(fn, args) { return new Promise(function (ok, fail) { api(fn, args, ok, function (m) { fail(new Error(m)); }); }); }
+
+// ---------- 進入活動 ----------
+function openAct(id, tab) {
+  $('busy').style.display = 'block';
+  api('getActivity', [TOKEN, id], function (d) {
+    ACT = d; TAB = tab || TAB || 'it';
+    $('home').classList.add('hidden'); $('mine').classList.add('hidden'); $('actView').classList.remove('hidden');
+    drawAct(); window.scrollTo(0, 0);
+  }, function (m) { alert(m); });
+}
+function closeAct() {
+  ACT = null; TAB = ''; $('actView').classList.add('hidden'); $('actView').innerHTML = '';
+  $('home').classList.remove('hidden'); $('mine').classList.remove('hidden');
+}
+function reloadAct() { if (ACT) openAct(ACT.act.id, TAB); }
+function drawAct() {
+  var a = ACT.act, r = ACT.role;
+  var tabs = [['it', '行程']];
+  if (r === 's') tabs.push(['w', '我的作業']);
+  if (r === 'p') tabs.push(['w', '孩子的作業']);
+  if (r === 't') tabs.push(['st', '繳交情形']);
+  tabs.push(['al', '活動相簿']);
+  tabs.push(['v', '影片']);
+  var h = '<div class="rolebar"><button onclick="closeAct()">← 返回</button><b>' + esc(a.name) + '</b></div>' +
+    '<div class="muted" style="margin:-6px 0 10px">' + esc(a.year) + ' 學年度｜' + esc(a.mode) + '交流｜' + esc(a.start) + '～' + esc(a.end) +
+    (ACT.group ? '｜第 ' + esc(ACT.group) + ' 組' : '') + (ACT.teacherRole ? '｜' + esc(ACT.teacherRole) : '') +
+    (r === 's' ? (ACT.canUpload ? (a.uploadUntil ? '｜上傳到 ' + esc(a.uploadUntil) : '') : '｜<b>目前不能上傳</b>') : '') + '</div>' +
+    '<div class="tabs">' + tabs.map(function (t) { return '<button class="' + (t[0] === TAB ? 'on' : '') + '" onclick="TAB=\'' + t[0] + '\';drawAct()">' + t[1] + '</button>'; }).join('') + '</div><div id="tabBody"></div>';
+  $('actView').innerHTML = h;
+  ({ it: drawItin, w: drawWorks, st: drawStats, al: drawAlbum, v: drawVideos })[TAB]();
+  loadViews();
+}
+function byDay(list) { var d = {}; list.forEach(function (x) { (d[x.day] = d[x.day] || []).push(x); }); return d; }
+function taskOf(id) { return ACT.itinerary.filter(function (t) { return t.id === id; })[0] || { id: id, name: '', spot: '', day: 0, hints: {} }; }
+function taskTitle(t) { return [t.slot, t.spot, t.name].filter(String).join('｜') || '（未命名）'; }
+function worksFor(taskId) { return (ACT.works || []).filter(function (w) { return w.taskId === taskId; }); }
+
+// ---------- 行程 ----------
+function drawItin() {
+  if (!ACT.itinerary.length) { $('tabBody').innerHTML = '<div class="card muted">行程還沒有排好。</div>'; return; }
+  var d = byDay(ACT.itinerary), h = '';
+  Object.keys(d).map(Number).sort(function (a, b) { return a - b; }).forEach(function (k) {
+    var first = d[k][0];
+    h += '<div class="dayh">第 ' + k + ' 天' + (first.date ? '｜' + esc(first.date) : '') + '</div>';
+    d[k].forEach(function (t) {
+      var lodging = t.slot === '住宿';
+      var mine = worksFor(t.id);
+      h += '<div class="task"><div class="tt"><div><b>' + esc(taskTitle(t)) + '</b>' + (t.required ? '<span class="badge req">必交</span>' : '') +
+        (t.type ? '<span class="badge">' + esc(t.type) + '</span>' : '') +
+        '<div class="meta">' + esc([t.city, t.lodging ? '住：' + t.lodging : ''].filter(String).join('｜')) + '</div>' +
+        (t.note ? '<div class="meta">' + esc(t.note) + '</div>' : '') +
+        (ACT.works && !lodging ? '<div class="meta">' + (mine.length ? '已交 ' + mine.length + ' 則' + (mine.some(function (w) { return w.state === '待補文字'; }) ? '（有待補文字）' : '') : '還沒交') + '</div>' : '') +
+        '</div>' + (ACT.role === 's' && ACT.canUpload && !lodging ? '<button class="sbtn pr" onclick="workForm(\'' + t.id + '\')">＋ 交作業</button>' : '') + '</div></div>';
+    });
+  });
+  $('tabBody').innerHTML = h;
+}
+
+// ---------- 作業 ----------
+function workCard(w, opts) {
+  opts = opts || {};
+  var t = taskOf(w.taskId);
+  var h = '<div class="work"><b>第 ' + w.day + ' 天｜' + esc(taskTitle(t)) + '</b> <span class="badge ' + (STATE_BADGE[w.state] || '') + '">' + esc(w.state) + '</span>';
+  h += '<div class="thumbs">' + (w.kind === '影片' ? w.files.map(function (f) { return '<div class="vt" onclick="playMedia(\'' + f + '\')">▶</div>'; }).join('')
+    : (w.views.length ? w.views : w.files).map(function (f) { return '<img data-v="' + esc(f) + '" alt="" onclick="zoomView(this)">'; }).join('')) + '</div>';
+  h += '<dl>' + SIX.filter(function (s) { return w[s[0]]; }).map(function (s) { return '<dt>' + s[1] + '</dt><dd>' + esc(w[s[0]]) + '</dd>'; }).join('') + '</dl>';
+  if (w.comment) h += '<div class="comment">老師：' + esc(w.comment) + '</div>';
+  if (opts.edit && w.state !== '隱藏') h += '<div style="margin-top:8px"><button class="sbtn" onclick="workForm(\'' + w.taskId + '\',\'' + w.id + '\')">修改</button> <button class="sbtn bad" onclick="delWork(\'' + w.id + '\')">刪除</button></div>';
+  if (opts.review) h += '<div style="margin-top:8px"><textarea id="cm_' + w.id + '" placeholder="給學生的意見（家長也看得到）">' + esc(w.comment) + '</textarea>' +
+    '<button class="sbtn pr" onclick="review(\'' + w.id + '\',{comment:$(\'cm_' + w.id + '\').value})">儲存意見</button> ' +
+    (w.state === '隱藏' ? '<button class="sbtn" onclick="review(\'' + w.id + '\',{hide:false})">恢復顯示</button>' : '<button class="sbtn bad" onclick="review(\'' + w.id + '\',{hide:true})">隱藏</button>') + '</div>';
+  return h + '</div>';
+}
+function drawWorks() {
+  var ws = ACT.works || [];
+  var order = {}; ACT.itinerary.forEach(function (t, i) { order[t.id] = i; });
+  ws = ws.slice().sort(function (a, b) { return a.day - b.day || (order[a.taskId] || 0) - (order[b.taskId] || 0); });
+  var h = ACT.role === 's' && ACT.canUpload ? '<p class="muted">到「行程」找到任務，按「＋ 交作業」上傳。只有你自己、你的家長和老師看得到。</p>' : '';
+  if (ACT.role === 'p') h = '<p class="muted">這裡是孩子在這次活動交的作業，只有您、孩子和老師看得到。</p>';
+  h += ws.length ? ws.map(function (w) { return workCard(w, { edit: ACT.role === 's' && ACT.canUpload }); }).join('') : '<div class="card muted">還沒有作業。</div>';
+  $('tabBody').innerHTML = h;
+}
+function delWork(id) {
+  if (!confirm('確定刪除這則作業？')) return;
+  api('deleteWork', [TOKEN, ACT.act.id, id], reloadAct);
+}
+
+/** 交作業表單：新增（taskId）或修改（workId）。 */
+function workForm(taskId, workId) {
+  var t = taskOf(taskId), w = workId ? (ACT.works || []).filter(function (x) { return x.id === workId; })[0] : null;
+  var hint = t.hints || {};
+  var pre = { when: w ? w.when : (t.date || ''), where: w ? w.where : [t.city, t.spot].filter(String).join(' '), who: w ? w.who : '', what: w ? w.what : '', why: w ? w.why : '', how: w ? w.how : '', find: w ? w.find : '' };
+  var ph = { who: hint.who, what: hint.what || '發生了什麼事？看到了什麼？', why: hint.why || '為什麼會這樣？為什麼重要？', how: hint.how, find: hint.find || '我學到或發現了什麼？' };
+  var h = '<h2>' + (w ? '修改作業' : '交作業') + '</h2><div class="muted">第 ' + t.day + ' 天｜' + esc(taskTitle(t)) + '</div>';
+  if (!w) h += '<label class="f"><span>類型</span><select id="wfKind" onchange="$(\'wfFile\').accept=this.value===\'影片\'?\'video/*\':\'image/*\';$(\'wfFile\').multiple=this.value!==\'影片\'"><option>照片</option><option>影片</option></select></label>';
+  h += '<label class="f"><span>' + (w ? '換檔案（不換就不用選）' : '選照片（最多 5 張）或 1 段影片') + '</span><input id="wfFile" type="file" accept="' + (w && w.kind === '影片' ? 'video/*' : 'image/*') + '"' + (w && w.kind === '影片' ? '' : ' multiple') + '></label>';
+  h += SIX.map(function (s) { return '<label class="f"><span>' + s[1] + (['what', 'why', 'find'].indexOf(s[0]) >= 0 ? '（必填）' : '') + '</span><textarea id="wf_' + s[0] + '" rows="2" placeholder="' + esc(ph[s[0]] || '') + '">' + esc(pre[s[0]]) + '</textarea></label>'; }).join('');
+  h += '<p class="muted">檔案傳完就會先存起來，文字可以之後再補；何事、為何、我的發現都寫了才算完成。</p>';
+  h += '<div class="prog hidden" id="wfProg"><i></i></div><div class="muted" id="wfMsg"></div><div class="err" id="wfErr"></div>' +
+    '<button class="btn pr" id="wfGo">儲存</button> <button class="btn" id="wfCancel" onclick="$(\'dlg\').close()">取消</button>';
+  $('dlg').classList.add('wide'); $('dlgBody').innerHTML = h; $('dlg').showModal();
+  $('wfGo').onclick = function () { saveWorkForm(t, w); };
+}
+async function saveWorkForm(t, w) {
+  var files = Array.prototype.slice.call($('wfFile').files || []);
+  var kind = w ? w.kind : $('wfKind').value;
+  $('wfErr').textContent = '';
+  if (!w && !files.length) { $('wfErr').textContent = '請先選檔案'; return; }
+  if (kind === '照片' && files.length > 5) { $('wfErr').textContent = '最多 5 張照片'; return; }
+  if (kind === '影片' && files.length > 1) { $('wfErr').textContent = '一次只能 1 段影片'; return; }
+  if (files.some(function (f) { return kind === '影片' ? !/^video\//.test(f.type) : !/^image\//.test(f.type); })) { $('wfErr').textContent = '檔案類型不對'; return; }
+  var rec = { id: w ? w.id : '', taskId: t.id, kind: kind, files: w ? w.files : [], views: w ? w.views : [] };
+  SIX.forEach(function (s) { rec[s[0]] = $('wf_' + s[0]).value; });
+  $('wfGo').disabled = true; $('wfCancel').disabled = true;
+  try {
+    if (files.length) {
+      var up = await uploadFiles(files, kind, { type: 'work', taskId: t.id }, setProg('wf'));
+      rec.files = up.files; rec.views = up.views;
+    }
+    $('wfMsg').textContent = '儲存文字…';
+    await gasP('saveWork', [TOKEN, ACT.act.id, rec]);
+    $('dlg').close(); $('dlg').classList.remove('wide');
+    TAB = 'w'; reloadAct();
+  } catch (e) {
+    $('wfErr').textContent = e.message + '（可以再按一次儲存）'; $('wfGo').disabled = false; $('wfCancel').disabled = false;
+  }
+}
+function setProg(p) {
+  return function (frac, msg) { $(p + 'Prog').classList.remove('hidden'); $(p + 'Prog').firstChild.style.width = Math.round(frac * 100) + '%'; if (msg) $(p + 'Msg').textContent = msg; };
+}
+
+// ---------- 上傳 ----------
+/** 照片：手機先縮成原圖（長邊 2048）與觀看版（長邊 1280）；影片原檔上傳。回傳 {files, views}。 */
+async function uploadFiles(files, kind, target, prog) {
+  var out = { files: [], views: [] }, n = files.length;
+  for (var i = 0; i < n; i++) {
+    var base = i / n, step = 1 / n, label = (n > 1 ? '第 ' + (i + 1) + '/' + n + ' 個檔案：' : '');
+    if (kind === '影片') {
+      out.files.push(await uploadBlob(target, '影片', files[i], '原檔', function (f) { prog(base + step * f, label + '上傳影片 ' + Math.round(f * 100) + '%'); }));
+    } else {
+      prog(base, label + '整理照片…');
+      var big = await makeJpeg(files[i], 2048, 0.85), small = await makeJpeg(files[i], 1280, 0.75);
+      if (small.size > 1400000) small = await makeJpeg(files[i], 1024, 0.6);
+      out.files.push(await uploadBlob(target, '照片', big, '原檔', function (f) { prog(base + step * 0.8 * f, label + '上傳照片 ' + Math.round(f * 100) + '%'); }));
+      out.views.push(await uploadBlob(target, '照片', small, '觀看版', function (f) { prog(base + step * (0.8 + 0.2 * f)); }));
+    }
+  }
+  prog(1, '上傳完成');
+  return out;
+}
+function makeJpeg(file, maxSide, q) {
+  return new Promise(function (ok, fail) {
+    var url = URL.createObjectURL(file), im = new Image();
+    im.onload = function () {
+      var w = im.naturalWidth, h = im.naturalHeight, s = Math.min(1, maxSide / Math.max(w, h));
+      var c = document.createElement('canvas'); c.width = Math.round(w * s); c.height = Math.round(h * s);
+      c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+      c.toBlob(function (b) { b ? ok(b) : fail(new Error('照片無法處理')); }, 'image/jpeg', q);
+    };
+    im.onerror = function () { URL.revokeObjectURL(url); fail(new Error('這張照片的格式手機無法處理，請改用一般照片（JPG）')); };
+    im.src = url;
+  });
+}
+/** 先試手機直接傳到雲端硬碟；不行就改由伺服器轉傳（較慢）。 */
+async function uploadBlob(target, kind, blob, variant, prog) {
+  var type = blob.type || (kind === '影片' ? 'video/mp4' : 'image/jpeg');
+  var s = await gasP('startUpload', [TOKEN, ACT.act.id, target, kind, type, blob.size, variant, location.origin]);
+  try {
+    var id = await directPut(s, blob, prog);
+    await gasP('confirmUpload', [TOKEN, s.uploadId, id]);
+    return id;
+  } catch (e) {
+    console.warn('直傳失敗，改用轉傳', e);
+    var s2 = await gasP('startUpload', [TOKEN, ACT.act.id, target, kind, type, blob.size, variant, '']);
+    return relay(s2, blob, prog);
+  }
+}
+async function directPut(s, blob, prog) {
+  var start = 0;
+  while (start < blob.size) {
+    var end = Math.min(start + s.chunkSize, blob.size);
+    var r = await fetch(s.sessionUri, { method: 'PUT', headers: { 'Content-Range': 'bytes ' + start + '-' + (end - 1) + '/' + blob.size }, body: blob.slice(start, end) });
+    if (r.status === 308) { var rg = r.headers.get('Range'); start = rg ? Number(rg.split('-')[1]) + 1 : end; prog(start / blob.size); continue; }
+    if (r.ok) { var j = await r.json(); prog(1); return j.id; }
+    throw new Error('直傳失敗 ' + r.status);
+  }
+  throw new Error('直傳沒有完成');
+}
+async function relay(s, blob, prog, from) {
+  var CH = 4 * 1024 * 1024, start = from || 0;
+  while (start < blob.size) {
+    var b64 = await toB64(blob.slice(start, Math.min(start + CH, blob.size)));
+    var r = await gasP('uploadChunk', [TOKEN, s.uploadId, b64, start]);
+    if (r.done) { prog(1); return r.fileId; }
+    start = r.next || Math.min(start + CH, blob.size); prog(start / blob.size);
+  }
+  throw new Error('上傳沒有完成，請再試一次');
+}
+function toB64(b) { return new Promise(function (ok, fail) { var fr = new FileReader(); fr.onload = function () { ok(String(fr.result).split(',')[1]); }; fr.onerror = fail; fr.readAsDataURL(b); }); }
+
+// ---------- 看檔 ----------
+var VQ = 0;
+/** 依序載入畫面上的觀看版圖片，同時最多 2 個請求。 */
+function loadViews() {
+  var imgs = document.querySelectorAll('img[data-v]:not([data-l])');
+  Array.prototype.forEach.call(imgs, function (im) {
+    var f = im.getAttribute('data-v');
+    if (VCACHE[f]) { im.src = VCACHE[f]; im.setAttribute('data-l', '1'); }
+  });
+  if (VQ >= 2) return;
+  var next = document.querySelector('img[data-v]:not([data-l])');
+  if (!next || !ACT) return;
+  next.setAttribute('data-l', '0'); VQ++;
+  var f = next.getAttribute('data-v');
+  api('getView', [TOKEN, ACT.act.id, f], function (u) { VQ--; VCACHE[f] = u; document.querySelectorAll('img[data-v="' + f + '"]').forEach(function (x) { x.src = u; x.setAttribute('data-l', '1'); }); loadViews(); },
+    function () { VQ--; next.setAttribute('data-l', 'x'); next.alt = '無法顯示'; loadViews(); });
+  loadViews();
+}
+function zoomView(im) { if (!im.src) return; $('lbVid').classList.add('hidden'); $('lbImg').classList.remove('hidden'); $('lbImg').src = im.src; $('lbCap').textContent = im.alt || ''; $('lb').style.display = 'flex'; }
+async function playMedia(f) {
+  $('busy').textContent = '讀取影片 0%'; $('busy').style.display = 'block';
+  try {
+    var parts = [], start = 0, mime = 'video/mp4';
+    while (start >= 0) {
+      var c = await gasP('getMediaChunk', [TOKEN, ACT.act.id, f, start]);
+      parts.push(Uint8Array.from(atob(c.b64), function (ch) { return ch.charCodeAt(0); }));
+      mime = c.mime; start = c.next;
+      $('busy').textContent = '讀取影片 ' + (start < 0 ? 100 : Math.round(start / c.total * 100)) + '%';
+    }
+    var v = $('lbVid'); v.src = URL.createObjectURL(new Blob(parts, { type: mime }));
+    $('lbImg').classList.add('hidden'); v.classList.remove('hidden'); $('lbCap').textContent = ''; $('lb').style.display = 'flex'; v.play();
+  } catch (e) { alert(e.message); }
+  $('busy').style.display = 'none'; $('busy').textContent = '稍等一下…';
+}
+
+// ---------- 教師：繳交情形 ----------
+function drawStats() {
+  var st = ACT.stats, tasks = ACT.itinerary.filter(function (t) { return t.slot !== '住宿'; }), req = tasks.filter(function (t) { return t.required; });
+  var h = '<p class="muted">必交任務 ' + req.length + ' 個。點學生可以看作業、寫意見或隱藏。</p><div class="card" style="padding:6px 12px">';
+  h += st.students.map(function (s) {
+    var done = 0, wait = 0;
+    tasks.forEach(function (t) { var v = st.done[t.id + '|' + s.sid]; if (v === '完成' && t.required) done++; if (v === '待補文字') wait++; });
+    return '<div class="stu" onclick="showStudent(\'' + s.sid + '\',\'' + esc(s.name) + '\')"><span class="badge">' + esc(s.group ? s.group + ' 組' : '—') + '</span><b>' + esc(s.name) + '</b>' +
+      '<span class="badge ' + (req.length && done >= req.length ? 'ok' : '') + '">必交 ' + done + '/' + req.length + '</span>' + (wait ? '<span class="badge wait">待補 ' + wait + '</span>' : '') + '</div>';
+  }).join('') || '<p class="muted">還沒有參加名單。</p>';
+  $('tabBody').innerHTML = h + '</div>';
+}
+var CUR_STU = null;
+function showStudent(sid, name) {
+  CUR_STU = { sid: sid, name: name };
+  api('getStudentWorks', [TOKEN, ACT.act.id, sid], function (ws) {
+    $('dlg').classList.add('wide');
+    $('dlgBody').innerHTML = '<h2>' + esc(name) + ' 的作業</h2>' + (ws.length ? ws.map(function (w) { return workCard(w, { review: true }); }).join('') : '<p class="muted">還沒有作業。</p>') +
+      '<button class="btn" onclick="$(\'dlg\').close();reloadAct()">關閉</button>';
+    if (!$('dlg').open) $('dlg').showModal();
+    loadViews();
+  });
+}
+function review(id, op) { api('reviewWork', [TOKEN, ACT.act.id, id, op], function () { showStudent(CUR_STU.sid, CUR_STU.name); }); }
+
+// ---------- 活動相簿 ----------
+function drawAlbum() {
+  var r = ACT.role, h = '';
+  if (r === 't') {
+    if (ACT.noConsent && ACT.noConsent.length) h += '<div class="warn">不同意公開照片的學生：' + ACT.noConsent.map(function (x) { return esc(x.name) + (x.group ? '（' + esc(x.group) + ' 組）' : ''); }).join('、') + '。設為公開的照片請避開他們。</div>';
+    if (ACT.canUpload) h += '<p><button class="sbtn pr" onclick="albumForm()">＋ 上傳照片或影片</button></p>';
+    h += '<p class="muted">標「公開」的照片會出現在網站首頁，任何人都看得到；其他只有參加的學生、家長和老師看得到。</p>';
+  } else h += '<p class="muted">老師拍的活動照片，參加的同學和家長都看得到。</p>';
+  if (!ACT.album.length) { $('tabBody').innerHTML = h + '<div class="card muted">還沒有照片。</div>'; return; }
+  var d = byDay(ACT.album);
+  Object.keys(d).map(Number).sort(function (a, b) { return a - b; }).forEach(function (k) {
+    h += '<div class="dayh">' + (k ? '第 ' + k + ' 天' : '其他') + '</div><div class="agrid">' + d[k].map(function (it) {
+      var flag = r === 't' ? (it.hidden ? '隱藏' : it.pub ? '公開' : '') : '';
+      var click = r === 't' ? 'albumMenu(\'' + it.id + '\')' : (it.kind === '影片' ? 'playMedia(\'' + it.file + '\')' : 'zoomAlbum(\'' + it.id + '\')');
+      var tile = it.kind === '影片' ? '<div class="vtile" onclick="' + click + '">▶</div>'
+        : (it.pub && !it.hidden ? '<img loading="lazy" referrerpolicy="no-referrer" src="' + img(it.file, 300) + '" onclick="' + click + '" alt="' + esc(it.caption) + '">'
+          : '<img data-v="' + esc(it.view || it.file) + '" onclick="' + click + '" alt="' + esc(it.caption) + '">');
+      return '<div class="it">' + tile + (flag ? '<span class="flag">' + flag + '</span>' : '') + '</div>';
+    }).join('') + '</div>';
+  });
+  $('tabBody').innerHTML = h;
+}
+function albumItem(id) { return ACT.album.filter(function (x) { return x.id === id; })[0]; }
+function zoomAlbum(id) {
+  var it = albumItem(id);
+  if (it.pub && !it.hidden) { $('lbVid').classList.add('hidden'); $('lbImg').classList.remove('hidden'); $('lbImg').src = img(it.file, 1600); $('lbCap').textContent = it.caption; $('lb').style.display = 'flex'; return; }
+  var f = it.view || it.file;
+  if (VCACHE[f]) { $('lbVid').classList.add('hidden'); $('lbImg').classList.remove('hidden'); $('lbImg').src = VCACHE[f]; $('lbCap').textContent = it.caption; $('lb').style.display = 'flex'; }
+}
+function albumMenu(id) {
+  var it = albumItem(id);
+  $('dlg').classList.remove('wide');
+  $('dlgBody').innerHTML = '<h2>相簿項目</h2>' +
+    (it.kind === '影片' ? '<button class="btn" onclick="$(\'dlg\').close();playMedia(\'' + it.file + '\')">▶ 播放影片</button>' : '<button class="btn" onclick="$(\'dlg\').close();zoomAlbum(\'' + it.id + '\')">看大圖</button>') +
+    '<label class="f"><span>說明</span><input id="amCap" value="' + esc(it.caption) + '" maxlength="60"></label>' +
+    (it.kind === '影片' ? '<p class="muted">影片不會公開到首頁。</p>' : '<label style="display:flex;gap:8px;align-items:center;margin:8px 0"><input type="checkbox" id="amPub" style="width:auto"' + (it.pub ? ' checked' : '') + '> 公開到首頁</label>') +
+    '<label style="display:flex;gap:8px;align-items:center;margin:8px 0"><input type="checkbox" id="amHide" style="width:auto"' + (it.hidden ? ' checked' : '') + '> 隱藏（學生和家長看不到）</label>' +
+    '<button class="btn pr" onclick="saveAlbumMenu(\'' + it.id + '\')">儲存</button> <button class="btn" onclick="$(\'dlg\').close()">取消</button>';
+  $('dlg').showModal();
+}
+function saveAlbumMenu(id) {
+  var it = albumItem(id), op = {};
+  if ($('amCap').value !== it.caption) op.caption = $('amCap').value;
+  if ($('amPub') && $('amPub').checked !== it.pub) op.pub = $('amPub').checked;
+  if ($('amHide').checked !== it.hidden) op.hide = $('amHide').checked;
+  if (!Object.keys(op).length) { $('dlg').close(); return; }
+  api('setAlbumItem', [TOKEN, ACT.act.id, id, op], function () { $('dlg').close(); reloadAct(); });
+}
+function albumForm() {
+  var days = {}; ACT.itinerary.forEach(function (t) { days[t.day] = t.date; });
+  $('dlg').classList.remove('wide');
+  $('dlgBody').innerHTML = '<h2>上傳到活動相簿</h2>' +
+    '<label class="f"><span>哪一天</span><select id="afDay">' + Object.keys(days).map(function (k) { return '<option value="' + k + '">第 ' + k + ' 天 ' + esc(days[k] || '') + '</option>'; }).join('') + '<option value="0">其他</option></select></label>' +
+    '<label class="f"><span>照片或影片（可多選）</span><input id="afFile" type="file" accept="image/*,video/*" multiple></label>' +
+    '<label class="f"><span>說明（同一批共用，可留白）</span><input id="afCap" maxlength="60"></label>' +
+    '<label style="display:flex;gap:8px;align-items:center;margin:8px 0"><input type="checkbox" id="afPub" style="width:auto" checked> 照片公開到首頁（影片不會公開）</label>' +
+    (ACT.noConsent && ACT.noConsent.length ? '<div class="warn">請避開：' + ACT.noConsent.map(function (x) { return esc(x.name); }).join('、') + '</div>' : '') +
+    '<div class="prog hidden" id="afProg"><i></i></div><div class="muted" id="afMsg"></div><div class="err" id="afErr"></div>' +
+    '<button class="btn pr" id="afGo" onclick="saveAlbumForm()">上傳</button> <button class="btn" id="afCancel" onclick="$(\'dlg\').close()">取消</button>';
+  var today = new Date(Date.now() + 8 * 3600000).toISOString().slice(0, 10);
+  Object.keys(days).forEach(function (k) { if (days[k] === today) $('afDay').value = k; });
+  $('dlg').showModal();
+}
+async function saveAlbumForm() {
+  var files = Array.prototype.slice.call($('afFile').files || []);
+  if (!files.length) { $('afErr').textContent = '請先選檔案'; return; }
+  var day = Number($('afDay').value), cap = $('afCap').value, pub = $('afPub').checked, prog = setProg('af'), done = 0, errs = [];
+  $('afGo').disabled = true; $('afCancel').disabled = true;
+  for (var i = 0; i < files.length; i++) {
+    var f = files[i], isV = /^video\//.test(f.type);
+    var p = function (x, m) { prog((i + x) / files.length, '第 ' + (i + 1) + '/' + files.length + ' 個' + (m ? '：' + m : '')); };
+    try {
+      var up = await uploadFiles([f], isV ? '影片' : '照片', { type: 'album', day: day }, p);
+      await gasP('addAlbumItem', [TOKEN, ACT.act.id, { file: up.files[0], view: up.views[0] || '', day: day, caption: cap, kind: isV ? '影片' : '照片', pub: pub }]);
+      done++;
+    } catch (e) { errs.push(f.name + '：' + e.message); }
+  }
+  prog(1, '完成 ' + done + ' 個' + (errs.length ? '，失敗 ' + errs.length + ' 個' : ''));
+  $('afCancel').disabled = false; $('afCancel').textContent = '關閉';
+  $('afCancel').onclick = function () { $('dlg').close(); reloadAct(); };
+  if (errs.length) $('afErr').textContent = errs.join('\n'); else { $('dlg').close(); TAB = 'al'; reloadAct(); }
+}
+
+// ---------- 影片 ----------
+var SHARE_TXT = { '': '', '申請': '等老師同意給同學看', '通過': '同學看得到', '退回': '老師沒有同意給同學看' };
+function videoCard(v, opts) {
+  opts = opts || {};
+  var h = '<div class="work"><b>' + (v.type === '每日' ? '第 ' + v.day + ' 天每日影片' : '總結影片') + (opts.who ? '｜' + esc(opts.who) : '') + '</b>' +
+    (v.share ? ' <span class="badge ' + (v.share === '通過' ? 'ok' : v.share === '申請' ? 'wait' : 'hid') + '">' + esc(opts.teacher && v.share === '申請' ? '申請給同學看' : SHARE_TXT[v.share]) + '</span>' : '') +
+    '<div>' + esc(v.title) + '</div><div class="meta muted">' + esc(v.seconds) + ' 秒' + (v.updated ? '｜' + esc(v.updated) : '') + '</div>' +
+    (v.note ? '<div class="comment">老師：' + esc(v.note) + '</div>' : '') +
+    '<div style="margin-top:8px"><button class="sbtn pr" onclick="playMedia(\'' + v.file + '\')">▶ 播放</button> ';
+  if (opts.own && ACT.canUpload) {
+    h += '<button class="sbtn" onclick="redoVideo(\'' + v.id + '\')">重做</button> ' +
+      (v.share === '申請' || v.share === '通過' ? '<button class="sbtn" onclick="shareVid(\'' + v.id + '\',false)">不給同學看</button> ' : '<button class="sbtn" onclick="shareVid(\'' + v.id + '\',true)">想給同學看</button> ') +
+      '<button class="sbtn bad" onclick="delVideo(\'' + v.id + '\')">刪除</button>';
+  }
+  if (opts.teacher) {
+    h += '<button class="sbtn" onclick="reviewVid(\'' + v.id + '\',true)">' + (v.share === '通過' ? '維持同意' : '同意給同學看') + '</button> <button class="sbtn bad" onclick="reviewVid(\'' + v.id + '\',false)">不同意</button>';
+  }
+  return h + '</div></div>';
+}
+function drawVideos() {
+  var r = ACT.role, vs = ACT.videos || [], h = '';
+  if (r === 's') {
+    h += '<p class="muted">挑自己交的作業照片，加上字幕和音樂，用手機做成短片。做好後你、你的家長和老師看得到；想給同學看，再按「想給同學看」請老師同意。</p>';
+    if (ACT.canUpload) {
+      var days = {}; (ACT.works || []).forEach(function (w) { if (w.kind !== '影片') days[w.day] = (days[w.day] || 0) + w.files.length; });
+      var keys = Object.keys(days).map(Number).sort(function (a, b) { return a - b; });
+      h += keys.length ? '<div class="card"><b>做每日影片</b>（每天一支，再做會取代）<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">' + keys.map(function (k) {
+        var has = vs.some(function (v) { return v.type === '每日' && v.day === k; });
+        return '<button class="sbtn' + (has ? '' : ' pr') + '" onclick="openMaker(\'每日\',' + k + ')">第 ' + k + ' 天（' + days[k] + ' 張）' + (has ? '｜重做' : '') + '</button>';
+      }).join('') + '</div><p style="margin:10px 0 0"><button class="sbtn" onclick="openMaker(\'總結\',0)">做總結影片（全部天數的照片）</button></p></div>'
+        : '<div class="card muted">先到「行程」交照片作業，就可以做影片。</div>';
+    }
+    h += '<h3>我做的影片</h3>' + (vs.length ? vs.map(function (v) { return videoCard(v, { own: true }); }).join('') : '<p class="muted">還沒有影片。</p>');
+    var cv = ACT.classVideos || [];
+    h += '<h3>同學的影片</h3>' + (cv.length ? cv.map(function (v) { return videoCard(v, { who: (v.group ? v.group + ' 組 ' : '') + v.name }); }).join('') : '<p class="muted">還沒有同學分享影片。</p>');
+  } else if (r === 'p') {
+    h += '<p class="muted">孩子用自己的照片做的影片。</p>' + (vs.length ? vs.map(function (v) { return videoCard(v); }).join('') : '<div class="card muted">還沒有影片。</div>');
+  } else {
+    var req = vs.filter(function (v) { return v.share === '申請'; });
+    h += '<p class="muted">學生做的影片不用審核，本人與家長就看得到。只有學生申請「給同學看」時需要你同意。</p>';
+    if (req.length) h += '<h3>等你同意給同學看（' + req.length + '）</h3>' + req.map(function (v) { return videoCard(v, { teacher: true, who: (v.group ? v.group + ' 組 ' : '') + v.name }); }).join('');
+    var rest = vs.filter(function (v) { return v.share !== '申請'; });
+    h += '<h3>' + (req.length ? '其他影片' : '全部影片') + '（' + rest.length + '）</h3>' + (rest.length ? rest.map(function (v) { return videoCard(v, { teacher: v.share === '通過', who: (v.group ? v.group + ' 組 ' : '') + v.name }); }).join('') : '<p class="muted">' + (req.length ? '沒有其他影片。' : '還沒有影片。') + '</p>');
+  }
+  $('tabBody').innerHTML = h;
+}
+function redoVideo(id) { var v = ACT.videos.filter(function (x) { return x.id === id; })[0]; openMaker(v.type, v.day, v); }
+function delVideo(id) { if (confirm('確定刪除這支影片？')) api('deleteMyVideo', [TOKEN, ACT.act.id, id], function (l) { ACT.videos = l; drawVideos(); }); }
+function shareVid(id, on) { api('shareVideo', [TOKEN, ACT.act.id, id, on], function (l) { ACT.videos = l; drawVideos(); }); }
+function reviewVid(id, ok) {
+  var note = ok ? '' : prompt('給學生的意見（可空白）', '') || '';
+  api('reviewVideo', [TOKEN, ACT.act.id, id, { approve: ok, note: note }], function (l) { ACT.videos = l; drawVideos(); });
+}
+</script>
+
+<!-- 學生影片（從完整版 2026-11-12 移植，2026-11-13）：學生挑自己的作業照片，在手機瀏覽器裡合成短片（不經過任何外部服務），上傳後本人、家長、老師看得到；想給同學看再送老師審核。
+     合成：方式 A＝WebCodecs 編碼＋mp4-muxer（Mp4Muxer.html，按需載入）組 MP4；不支援的手機改用方式 B＝畫面錄影（MediaRecorder）。 -->
+<style>
+  .mkw { max-width:960px; margin:0 auto; padding:14px 16px 30px; }
+  .mkw .f { font-weight:bold; margin-bottom:6px; }
+  .mkw .hint { color:var(--muted); font-size:15px; }
+  .mkw button { font:inherit; padding:10px 16px; border-radius:10px; border:1px solid var(--role); background:var(--role); color:#fff; cursor:pointer; }
+  .mkw button.ghost, .mkw .mk-pick .p { background:#fff; color:var(--role); }
+  .mkw button:disabled { opacity:.5; }
+  .mkw .big { width:100%; margin-top:6px; }
+  .mkw input[type=text] { font:inherit; padding:8px 10px; border:1px solid #c9c2b8; border-radius:8px; width:100%; }
+  .mkw progress { width:100%; }
+  .mkw .msg.err { color:var(--bad); } .mkw .msg.ok { color:var(--ok); }
+  :root { --ng:var(--bad); }
+</style>
+<style>
+  .mk-days { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+  .mk-days button { text-align: left; line-height: 1.35; }
+  .mk-days small { display: block; font-size: 12px; opacity: .85; }
+  .mk-v .top { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+  .mk-v .acts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .mk-v .acts button { padding: 9px 14px; }
+  .b-wait { background: #e8f0fe; color: #1a5f8f; }
+  .mk-rec { margin-bottom: 10px; }
+  .mk-rec .h { font-size: 14px; color: #5f6368; margin-bottom: 4px; }
+  .mk-pick { display: flex; gap: 6px; flex-wrap: wrap; }
+  .mk-pick .p { position: relative; width: 84px; height: 84px; border-radius: 8px; overflow: hidden; background: #ddd; cursor: pointer; border: 0; padding: 0; }
+  .mk-pick .p img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .mk-pick .p .ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #666; }
+  .mk-pick .p .n { position: absolute; right: 4px; top: 4px; min-width: 24px; height: 24px; border-radius: 12px; background: #f2b705; color: #222; font-weight: 700; font-size: 14px; line-height: 24px; text-align: center; }
+  .mk-pick .p.on { outline: 3px solid #f2b705; outline-offset: -3px; }
+  .mk-sel { display: flex; flex-direction: column; gap: 8px; }
+  .mk-sel .row { display: grid; grid-template-columns: 64px 1fr; gap: 8px; align-items: start; border: 1px solid var(--line); border-radius: 10px; padding: 8px; }
+  .mk-sel .row img, .mk-sel .row .ph { width: 64px; height: 64px; object-fit: cover; border-radius: 6px; background: #ddd; }
+  .mk-sel .row .c { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .mk-sel .row .ctl { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .mk-sel .row .ctl button { padding: 6px 10px; font-size: 14px; }
+  .mk-sel select, .mk-set select { font: inherit; padding: 8px; border: 1px solid #c9ccd1; border-radius: 8px; background: #fff; }
+  .mk-set { display: grid; grid-template-columns: 1fr; gap: 6px; }
+  .mk-stage { width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: 10px; overflow: hidden; }
+  .mk-stage canvas, .mk-stage video { width: 100%; height: 100%; display: block; }
+  .mk-total { font-weight: 600; }
+  .mk-total.over { color: var(--ng); }
+</style>
+
+<!-- 我的影片：製作 -->
+<section id="vMakerEdit" class="hidden mkw">
+  <div class="card">
+    <div class="f" id="meTitle"></div>
+    <div class="hint" id="meHint"></div>
+  </div>
+  <div class="card">
+    <div class="f">1. 點照片選進影片（依點的順序排列）</div>
+    <div id="mePicker"></div>
+  </div>
+  <div class="card">
+    <div class="f">2. 調整順序、字幕、秒數</div>
+    <div class="mk-sel" id="meSel"></div>
+    <p class="mk-total" id="meTotal"></p>
+  </div>
+  <div class="card mk-set">
+    <div class="f">3. 片頭與音樂</div>
+    <label class="hint" for="meName">片頭標題</label><input type="text" id="meName" maxlength="30">
+    <label class="hint" for="meMusic">背景音樂</label><select id="meMusic"></select>
+    <label class="hint" for="meRes">畫質</label>
+    <select id="meRes"><option value="1280x720">一般（720p）</option><option value="854x480">省流量（480p，舊手機或網路慢時用）</option></select>
+  </div>
+  <div class="card">
+    <div class="f">4. 製作與儲存</div>
+    <div class="mk-stage" id="meStage"><canvas id="meCanvas" width="1280" height="720"></canvas></div>
+    <progress id="meProg" value="0" max="1" style="margin-top:8px"></progress>
+    <div class="hint" id="meStatus">按「製作影片」後請不要切換 App 或關螢幕。</div>
+    <div id="meMsg"></div>
+    <p></p>
+    <button id="meMake" class="big">製作影片</button>
+    <p></p>
+    <button id="meSend" class="big hidden">儲存影片</button>
+  </div>
+  <button id="meBack" class="big ghost">返回活動</button>
+</section>
+
+<script>
+// ---- 與前台主程式的銜接（原本完整版主頁面提供的函式）----
+var S = { get token() { return TOKEN; }, get home() { return { me: { group: (ACT && ACT.group) || '', name: (ME && ME.name) || '' } }; } };
+function run(fn) { return gasP(fn, Array.prototype.slice.call(arguments, 1)); }
+function msg(id, text, ok) { $(id).innerHTML = text ? '<div class="msg ' + (ok ? 'ok' : 'err') + '">' + esc(text) + '</div>' : ''; }
+function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+function mkStore(k, v) { try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+function mkLoad(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } }
+function show(id) { $('actView').classList.add('hidden'); $(id).classList.remove('hidden'); window.scrollTo(0, 0); }
+function closeMaker(saved) {
+  $('vMakerEdit').classList.add('hidden'); $('actView').classList.remove('hidden');
+  if (saved) { TAB = 'v'; reloadAct(); }
+}
+function uploadViaServer(s, blob, start, prog) { return relay(s, blob, prog, start); }
+/** 作業照片的縮圖（用觀看版）。 */
+function getThumbs(recId) {
+  var rec = MK.data.photos.filter(function (p) { return p.id === recId; })[0];
+  var ids = rec.fileIds.map(function (f, i) { return rec.views[i] || f; });
+  return ids.reduce(function (p, f) {
+    return p.then(function (list) {
+      if (VCACHE[f]) return list.concat([{ src: VCACHE[f] }]);
+      return gasP('getView', [TOKEN, ACT.act.id, f]).then(function (u) { VCACHE[f] = u; return list.concat([{ src: u }]); }, function () { return list.concat([{ src: '' }]); });
+    });
+  }, Promise.resolve([]));
+}
+var thumbQueue = [], thumbBusy = 0;
+function queueThumb(job) { thumbQueue.push(job); pumpThumbs(); }
+function pumpThumbs() {
+  while (thumbBusy < 2 && thumbQueue.length) { thumbBusy++; thumbQueue.shift()().then(done, done); }
+  function done() { thumbBusy--; pumpThumbs(); }
+}
+var MUXER_LOADED = false;
+/** 影片合成程式庫（約 70 KB）只在要做影片時才載入，首頁不用下載。 */
+async function loadMuxer() {
+  if (MUXER_LOADED || typeof Mp4Muxer !== 'undefined') return;
+  var js = await gasP('getMuxerJs', [TOKEN]);
+  var el = document.createElement('script'); el.textContent = js + '\nwindow.Mp4Muxer = Mp4Muxer;'; document.head.appendChild(el);
+  MUXER_LOADED = true;
+}
+/** 從活動頁開啟做影片：type '每日'|'總結'，existing 為要重做的影片。 */
+async function openMaker(type, day, existing) {
+  $('busy').style.display = 'block';
+  try {
+    await loadMuxer();
+    MK.data = await gasP('getVideoMaker', [TOKEN, ACT.act.id]);
+    MK.diag = null;
+    $('busy').style.display = 'none';
+    if (existing && existing.type === '每日') existing = MK.data.videos.filter(function (v) { return v.id === existing.id; })[0] || existing;
+    openMakerEdit(type, day, existing || null);
+  } catch (e) { $('busy').style.display = 'none'; alert(e.message); }
+}
+</script>
+<script>
+var MK = { data: null, edit: null, imgs: {}, music: {}, result: null, busy: false, diag: null };
+var MK_FPS = 30, MK_TITLE = 2.5, MK_FADE = 0.5, MK_FONT = '"PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif';
+
+// ---------------- 製作畫面 ----------------
+function mkDraftKey(e) { var me = S.home && S.home.me ? S.home.me.group + '_' + S.home.me.name : 'me'; return 'ax_vdraft_' + ACT.act.id + '_' + me + '_' + (e.type === '每日' ? 'd' + e.day : (e.replaceId || 'new')); }
+
+function openMakerEdit(type, day, existing) {
+  var d = MK.data;
+  var recs = d.photos.filter(function (p) { return type === '總結' || p.day === day; });
+  var e = MK.edit = { type: type, day: type === '每日' ? day : 0, replaceId: existing && type === '總結' ? existing.id : '', recs: recs, sel: [], title: '', music: '', res: '1280x720' };
+  var draft = mkLoad(mkDraftKey(e));
+  var byKey = {}; recs.forEach(function (r) { byKey[r.id] = r; });
+  var srcSel = draft && draft.sel ? draft.sel : (existing ? existing.sources.map(function (k) { var p = k.split(':'); return { r: p[0], i: Number(p[1]) }; }) : []);
+  e.sel = srcSel.filter(function (s) { return byKey[s.r] && s.i < byKey[s.r].files; }).map(function (s) {
+    return { r: s.r, i: s.i, caption: s.caption !== undefined ? s.caption : (byKey[s.r].caption || ''), sec: s.sec || 3 };
+  });
+  e.title = draft && draft.title || (existing && existing.title) || (type === '每日' ? 'Day ' + day + (recs[0] ? '｜' + recs[0].place : '') : '我的安平×塩竈交流');
+  e.music = draft && draft.music !== undefined ? draft.music : (d.music[0] ? d.music[0].id : '');
+  e.res = draft && draft.res || '1280x720';
+  MK.result = null;
+  $('meTitle').textContent = type === '每日' ? 'Day ' + day + ' 每日影片' : '總結影片';
+  $('meHint').textContent = '照片 ' + d.limits.minPhotos + '～' + d.limits.maxPhotos + ' 張，最長 ' + mkLimit() + ' 秒（片頭另計）。' + (type === '每日' ? '只能用自己今天的照片。' : '可以用自己每一天的照片。');
+  $('meName').value = e.title;
+  $('meMusic').innerHTML = '<option value="">不要音樂</option>' + d.music.map(function (m) { return '<option value="' + esc(m.id) + '">' + esc(m.name) + '</option>'; }).join('');
+  $('meMusic').value = e.music;
+  $('meRes').value = e.res;
+  $('meSend').classList.add('hidden'); $('meMake').disabled = false; $('meProg').value = 0; msg('meMsg', '');
+  $('meStatus').textContent = '按「製作影片」後請不要切換 App 或關螢幕。';
+  mkStage('canvas');
+  renderPicker(); renderSel();
+  show('vMakerEdit');
+  mkCheck();
+}
+
+function mkLimit() { return MK.edit.type === '每日' ? MK.data.limits.dailySeconds : MK.data.limits.summarySeconds; }
+function mkSave() { var e = MK.edit; mkStore(mkDraftKey(e), { sel: e.sel, title: e.title, music: e.music, res: e.res }); MK.result = null; $('meSend').classList.add('hidden'); }
+
+function renderPicker() {
+  var e = MK.edit, box = $('mePicker'); box.innerHTML = '';
+  if (!e.recs.length) { box.innerHTML = '<div class="hint">這一天沒有你上傳的照片。</div>'; return; }
+  thumbQueue = [];
+  var lastDay = null;
+  e.recs.forEach(function (r) {
+    if (e.type === '總結' && r.day !== lastDay) { box.insertAdjacentHTML('beforeend', '<div class="f" style="margin-top:8px">Day ' + esc(r.day) + '</div>'); lastDay = r.day; }
+    var w = document.createElement('div'); w.className = 'mk-rec';
+    w.innerHTML = '<div class="h">' + esc(r.taskName || r.place) + (r.caption ? '｜' + esc(r.caption) : '') + '</div>';
+    var row = document.createElement('div'); row.className = 'mk-pick'; w.appendChild(row);
+    for (var i = 0; i < r.files; i++) (function (i) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'p'; b.dataset.k = r.id + ':' + i;
+      b.innerHTML = '<div class="ph">讀取中</div>';
+      b.onclick = function () { mkToggle(r, i); };
+      row.appendChild(b);
+    })(i);
+    box.appendChild(w);
+    queueThumb(function () {
+      return getThumbs(r.id).then(function (list) {
+        list.forEach(function (x, i) {
+          var b = row.children[i]; if (!b) return;
+          MK.thumbs = MK.thumbs || {}; MK.thumbs[r.id + ':' + i] = x.src;
+          if (x.src) b.querySelector('.ph').outerHTML = '<img src="' + esc(x.src) + '">';
+          else b.querySelector('.ph').textContent = '照片';
+        });
+        renderSel(true);
+      }).catch(function () { Array.prototype.forEach.call(row.children, function (b) { var p = b.querySelector('.ph'); if (p) p.textContent = '讀取失敗'; }); });
+    });
+  });
+  markPicker();
+}
+
+function markPicker() {
+  var e = MK.edit, idx = {};
+  e.sel.forEach(function (s, n) { idx[s.r + ':' + s.i] = n + 1; });
+  Array.prototype.forEach.call($('mePicker').querySelectorAll('.p'), function (b) {
+    var n = idx[b.dataset.k], old = b.querySelector('.n');
+    if (old) old.remove();
+    b.classList.toggle('on', !!n);
+    if (n) b.insertAdjacentHTML('beforeend', '<span class="n">' + n + '</span>');
+  });
+}
+
+function mkToggle(r, i) {
+  var e = MK.edit, k = r.id + ':' + i;
+  var at = e.sel.findIndex(function (s) { return s.r + ':' + s.i === k; });
+  if (at >= 0) e.sel.splice(at, 1);
+  else {
+    if (e.sel.length >= MK.data.limits.maxPhotos) { msg('meMsg', '最多選 ' + MK.data.limits.maxPhotos + ' 張'); return; }
+    var used = e.sel.some(function (s) { return s.r === r.id; });
+    e.sel.push({ r: r.id, i: i, caption: used ? '' : (r.caption || ''), sec: 3 });
+  }
+  msg('meMsg', ''); mkSave(); markPicker(); renderSel();
+}
+
+function renderSel(thumbsOnly) {
+  var e = MK.edit, box = $('meSel');
+  if (thumbsOnly) {
+    Array.prototype.forEach.call(box.querySelectorAll('[data-k]'), function (el) {
+      var src = MK.thumbs && MK.thumbs[el.dataset.k];
+      if (src && el.tagName !== 'IMG') el.outerHTML = '<img data-k="' + esc(el.dataset.k) + '" src="' + esc(src) + '">';
+    });
+    return;
+  }
+  box.innerHTML = e.sel.length ? '' : '<div class="hint">還沒選照片。點上面的照片加進來。</div>';
+  e.sel.forEach(function (s, n) {
+    var row = document.createElement('div'); row.className = 'row';
+    var k = s.r + ':' + s.i, src = MK.thumbs && MK.thumbs[k];
+    row.innerHTML = src ? '<img data-k="' + esc(k) + '" src="' + esc(src) + '">' : '<div class="ph" data-k="' + esc(k) + '"></div>';
+    var c = document.createElement('div'); c.className = 'c';
+    var cap = document.createElement('input'); cap.type = 'text'; cap.maxLength = 30; cap.value = s.caption; cap.placeholder = '字幕（可空白）';
+    cap.setAttribute('aria-label', '第 ' + (n + 1) + ' 張字幕');
+    cap.oninput = function () { s.caption = cap.value; mkSave(); };
+    var ctl = document.createElement('div'); ctl.className = 'ctl';
+    ctl.insertAdjacentHTML('beforeend', '<span class="hint">' + (n + 1) + '.</span>');
+    var sec = document.createElement('select'); sec.setAttribute('aria-label', '第 ' + (n + 1) + ' 張秒數');
+    [2, 3, 4, 5].forEach(function (x) { sec.insertAdjacentHTML('beforeend', '<option value="' + x + '"' + (x === s.sec ? ' selected' : '') + '>' + x + ' 秒</option>'); });
+    sec.onchange = function () { s.sec = Number(sec.value); mkSave(); mkTotal(); };
+    function mb(t, fn, dis) { var b = document.createElement('button'); b.type = 'button'; b.className = 'ghost'; b.textContent = t; b.disabled = !!dis; b.onclick = fn; return b; }
+    ctl.appendChild(sec);
+    ctl.appendChild(mb('上移', function () { e.sel.splice(n - 1, 0, e.sel.splice(n, 1)[0]); mkSave(); markPicker(); renderSel(); }, n === 0));
+    ctl.appendChild(mb('下移', function () { e.sel.splice(n + 1, 0, e.sel.splice(n, 1)[0]); mkSave(); markPicker(); renderSel(); }, n === e.sel.length - 1));
+    ctl.appendChild(mb('移除', function () { e.sel.splice(n, 1); mkSave(); markPicker(); renderSel(); }));
+    c.appendChild(cap); c.appendChild(ctl); row.appendChild(c); box.appendChild(row);
+  });
+  mkTotal();
+}
+
+function mkSeconds() { return MK.edit.sel.reduce(function (a, s) { return a + s.sec; }, 0); }
+function mkTotal() {
+  var sec = mkSeconds(), lim = mkLimit(), el = $('meTotal');
+  el.textContent = MK.edit.sel.length + ' 張照片，' + sec + ' 秒（上限 ' + lim + ' 秒）' + (sec > lim ? '：太長了，請減少照片或秒數' : '');
+  el.classList.toggle('over', sec > lim);
+}
+
+document.getElementById('meName').oninput = function () { MK.edit.title = $('meName').value; mkSave(); };
+document.getElementById('meMusic').onchange = function () { MK.edit.music = $('meMusic').value; mkSave(); };
+document.getElementById('meRes').onchange = function () { MK.edit.res = $('meRes').value; mkSave(); };
+document.getElementById('meBack').onclick = function () { if (MK.busy) return; closeMaker(); };
+
+function mkStage(kind, url) {
+  var st = $('meStage');
+  if (kind === 'video') { st.innerHTML = '<video controls playsinline src="' + url + '"></video>'; return; }
+  if (!$('meCanvas')) st.innerHTML = '<canvas id="meCanvas" width="1280" height="720"></canvas>';
+}
+
+// ---------------- 裝置支援 ----------------
+var MK_AVC = ['avc1.640028', 'avc1.4d0028', 'avc1.42001f'];
+async function mkVideoCodec(w, h) {
+  if (!('VideoEncoder' in window) || typeof Mp4Muxer === 'undefined') return null;
+  for (var i = 0; i < MK_AVC.length; i++) {
+    try { var r = await VideoEncoder.isConfigSupported({ codec: MK_AVC[i], width: w, height: h, bitrate: 2500000, framerate: MK_FPS }); if (r.supported) return { codec: MK_AVC[i], mux: 'avc' }; } catch (e) {}
+  }
+  try { var r2 = await VideoEncoder.isConfigSupported({ codec: 'vp09.00.31.08', width: w, height: h, bitrate: 2500000, framerate: MK_FPS }); if (r2.supported) return { codec: 'vp09.00.31.08', mux: 'vp9' }; } catch (e) {}
+  return null;
+}
+async function mkAudioCodec() {
+  if (!('AudioEncoder' in window)) return null;
+  try { var r = await AudioEncoder.isConfigSupported({ codec: 'mp4a.40.2', sampleRate: 44100, numberOfChannels: 2, bitrate: 96000 }); if (r.supported) return { codec: 'mp4a.40.2', mux: 'aac', rate: 44100 }; } catch (e) {}
+  try { var r2 = await AudioEncoder.isConfigSupported({ codec: 'opus', sampleRate: 48000, numberOfChannels: 2, bitrate: 96000 }); if (r2.supported) return { codec: 'opus', mux: 'opus', rate: 48000 }; } catch (e) {}
+  return null;
+}
+function mkRecorderType() {
+  if (!('MediaRecorder' in window) || !HTMLCanvasElement.prototype.captureStream) return null;
+  var list = ['video/mp4;codecs=avc1,mp4a.40.2', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'];
+  for (var i = 0; i < list.length; i++) { try { if (MediaRecorder.isTypeSupported(list[i])) return list[i]; } catch (e) {} }
+  return null;
+}
+async function mkCheck() {
+  if (MK.diag) return MK.diag;
+  var v720 = await mkVideoCodec(1280, 720), v480 = v720 || await mkVideoCodec(854, 480);
+  MK.diag = { a720: !!v720, a480: !!v480, b: !!mkRecorderType() };
+  if (!MK.diag.a720 && MK.diag.a480 && MK.edit) { MK.edit.res = '854x480'; $('meRes').value = '854x480'; }
+  if (!MK.diag.a480 && !MK.diag.b) msg('meMsg', '這支手機的瀏覽器不支援做影片。請改用其他手機或平板（iPhone 請用 iOS 17 以上的 Safari；Android 請用 Chrome）。');
+  return MK.diag;
+}
+
+// ---------------- 讀取照片與音樂 ----------------
+function mkB64(s) { var bin = atob(s), a = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i); return a; }
+async function mkFetch(fn, a, b) {   // 分段讀檔：照片（作業紀錄ID, 第幾張）優先讀觀看版；音樂（檔案ID）
+  var start = 0, parts = [], mime = '', fid = a;
+  if (fn === 'fileChunk') { var rec = MK.data.photos.filter(function (p) { return p.id === a; })[0]; fid = rec.views[b] || rec.fileIds[b]; }
+  while (start >= 0) {
+    var r = fn === 'fileChunk' ? await run('getMediaChunk', S.token, ACT.act.id, fid, start) : await run('musicChunk', S.token, ACT.act.id, fid, start);
+    parts.push(mkB64(r.b64)); mime = r.mime; start = r.next;
+  }
+  return new Blob(parts, { type: mime });
+}
+function mkShrink(src, w, h, max) {
+  var k = Math.min(1, max / Math.max(w, h)), c = document.createElement('canvas');
+  c.width = Math.max(2, Math.round(w * k)); c.height = Math.max(2, Math.round(h * k));
+  c.getContext('2d').drawImage(src, 0, 0, c.width, c.height);
+  return c;
+}
+async function mkImage(s) {
+  var k = s.r + ':' + s.i;
+  if (MK.imgs[k]) return MK.imgs[k];
+  var blob = await mkFetch('fileChunk', s.r, s.i), img;
+  try {
+    var bmp = await createImageBitmap(blob);
+    img = mkShrink(bmp, bmp.width, bmp.height, 1600); if (bmp.close) bmp.close();
+  } catch (e) {
+    var url = URL.createObjectURL(blob);
+    try {
+      var el = await new Promise(function (ok, no) { var i = new Image(); i.onload = function () { ok(i); }; i.onerror = function () { no(new Error('照片讀不出來')); }; i.src = url; });
+      img = mkShrink(el, el.naturalWidth, el.naturalHeight, 1600);
+    } finally { URL.revokeObjectURL(url); }
+  }
+  MK.imgs[k] = img;
+  return img;
+}
+async function mkMusicBuffer(fileId) {
+  if (!MK.music[fileId]) MK.music[fileId] = await (await mkFetch('musicChunk', fileId)).arrayBuffer();
+  return MK.music[fileId];
+}
+/** 背景音樂：剪成影片長度，開頭 1 秒淡入、最後 2 秒淡出。 */
+async function mkAudio(total, rate) {
+  if (!MK.edit.music) return null;
+  var raw = await mkMusicBuffer(MK.edit.music);
+  var off = new OfflineAudioContext(2, Math.ceil(total * rate), rate);
+  var src = await off.decodeAudioData(raw.slice(0));
+  var s = off.createBufferSource(); s.buffer = src; s.loop = true;
+  var g = off.createGain(), vol = 0.6;
+  g.gain.setValueAtTime(0, 0); g.gain.linearRampToValueAtTime(vol, 1);
+  g.gain.setValueAtTime(vol, Math.max(1, total - 2)); g.gain.linearRampToValueAtTime(0, total);
+  s.connect(g); g.connect(off.destination); s.start(0);
+  return off.startRendering();
+}
+
+// ---------------- 畫面 ----------------
+function mkCover(g, img, W, H, scale, px, py) {
+  var k = Math.max(W / img.width, H / img.height) * scale, w = img.width * k, h = img.height * k;
+  g.drawImage(img, (W - w) / 2 + px * (w - W) / 2, (H - h) / 2 + py * (h - H) / 2, w, h);
+}
+function mkWrap(g, text, maxW) {
+  var lines = [], cur = '';
+  Array.from(text).forEach(function (ch) { if (g.measureText(cur + ch).width > maxW && cur) { lines.push(cur); cur = ch; } else cur += ch; });
+  if (cur) lines.push(cur);
+  return lines.slice(0, 2);
+}
+function mkTimeline(items) {
+  var segs = [{ type: 'title', start: 0, dur: MK_TITLE }], t = MK_TITLE;
+  items.forEach(function (it, i) { segs.push({ type: 'photo', it: it, i: i, start: t, dur: it.sec }); t += it.sec; });
+  return { segs: segs, total: t + MK_FADE };
+}
+function mkSeg(g, W, H, seg, t, alpha, title, sub) {
+  if (alpha <= 0) return;
+  g.globalAlpha = alpha;
+  if (seg.type === 'title') {
+    g.fillStyle = '#16303f'; g.fillRect(0, 0, W, H);
+    g.fillStyle = '#fff'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.font = '700 ' + Math.round(H * .08) + 'px ' + MK_FONT; g.fillText(title, W / 2, H * .46);
+    g.fillStyle = 'rgba(255,255,255,.75)'; g.font = '400 ' + Math.round(H * .045) + 'px ' + MK_FONT; g.fillText(sub, W / 2, H * .58);
+  } else {
+    var p = Math.min(1, Math.max(0, (t - seg.start) / (seg.dur + MK_FADE))), dir = seg.i % 4;
+    var sc = dir % 2 ? 1.12 - .1 * p : 1.02 + .1 * p;
+    var px = [-.6, .6, 0, -.3][dir] * (p - .5), py = [0, -.3, .5, .3][dir] * (p - .5);
+    g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
+    mkCover(g, seg.it.img, W, H, sc, px, py);
+    var cap = (seg.it.caption || '').trim();
+    if (cap) {
+      var fs = Math.round(H * .05); g.font = '600 ' + fs + 'px ' + MK_FONT;
+      var lines = mkWrap(g, cap, W * .86), lh = fs * 1.35, boxH = lines.length * lh + fs * .9, y0 = H - boxH - H * .04;
+      g.fillStyle = 'rgba(0,0,0,.55)'; g.fillRect(0, y0, W, boxH);
+      g.fillStyle = '#fff'; g.textAlign = 'center'; g.textBaseline = 'middle';
+      lines.forEach(function (l, k) { g.fillText(l, W / 2, y0 + fs * .45 + lh * (k + .5)); });
+    }
+  }
+  g.globalAlpha = 1;
+}
+function mkFrame(g, W, H, tl, t, title, sub) {
+  var segs = tl.segs, i = segs.length - 1;
+  for (var k = 0; k < segs.length; k++) if (t < segs[k].start + segs[k].dur) { i = k; break; }
+  var s = segs[i], end = s.start + s.dur;
+  mkSeg(g, W, H, s, t, 1, title, sub);
+  if (i + 1 < segs.length && t > end - MK_FADE) mkSeg(g, W, H, segs[i + 1], t, (t - (end - MK_FADE)) / MK_FADE, title, sub);
+  if (i === segs.length - 1 && t > end) { g.fillStyle = 'rgba(0,0,0,' + Math.min(1, (t - end) / MK_FADE) + ')'; g.fillRect(0, 0, W, H); }
+}
+
+// ---------------- 編碼 ----------------
+async function mkEncodeA(W, H, tl, g, title, sub) {
+  var vc = await mkVideoCodec(W, H);
+  if (!vc) throw new Error('NO_A');
+  var ac = MK.edit.music ? await mkAudioCodec() : null, audio = null;
+  if (ac) { $('meStatus').textContent = '準備音樂…'; audio = await mkAudio(tl.total, ac.rate); }
+  var muxer = new Mp4Muxer.Muxer({
+    target: new Mp4Muxer.ArrayBufferTarget(),
+    video: { codec: vc.mux, width: W, height: H, frameRate: MK_FPS },
+    audio: audio ? { codec: ac.mux, numberOfChannels: 2, sampleRate: ac.rate } : undefined,
+    fastStart: 'in-memory', firstTimestampBehavior: 'offset'
+  });
+  var err = null;
+  var ve = new VideoEncoder({ output: function (c, m) { muxer.addVideoChunk(c, m); }, error: function (e) { err = e; } });
+  ve.configure({ codec: vc.codec, width: W, height: H, bitrate: W >= 1280 ? 2500000 : 1200000, framerate: MK_FPS });
+  var N = Math.round(tl.total * MK_FPS);
+  for (var f = 0; f < N; f++) {
+    if (err) throw err;
+    mkFrame(g, W, H, tl, f / MK_FPS, title, sub);
+    var fr = new VideoFrame(g.canvas, { timestamp: Math.round(f * 1e6 / MK_FPS), duration: Math.round(1e6 / MK_FPS) });
+    ve.encode(fr, { keyFrame: f % (MK_FPS * 2) === 0 }); fr.close();
+    while (ve.encodeQueueSize > 8) await sleep(4);
+    if (f % 10 === 0) { $('meProg').value = f / N; $('meStatus').textContent = '製作中… ' + Math.round(f / N * 100) + '%'; await sleep(0); }
+  }
+  await ve.flush(); ve.close();
+  if (err) throw err;
+  if (audio) {
+    var ae = new AudioEncoder({ output: function (c, m) { muxer.addAudioChunk(c, m); }, error: function (e) { err = e; } });
+    ae.configure({ codec: ac.codec, sampleRate: ac.rate, numberOfChannels: 2, bitrate: 96000 });
+    var L = audio.getChannelData(0), R = audio.getChannelData(1), CH = 1024;
+    for (var i = 0; i < L.length; i += CH) {
+      var n = Math.min(CH, L.length - i), data = new Float32Array(n * 2);
+      data.set(L.subarray(i, i + n), 0); data.set(R.subarray(i, i + n), n);
+      var ad = new AudioData({ format: 'f32-planar', sampleRate: ac.rate, numberOfFrames: n, numberOfChannels: 2, timestamp: Math.round(i * 1e6 / ac.rate), data: data });
+      ae.encode(ad); ad.close();
+      if ((i / CH) % 200 === 0) await sleep(0);
+    }
+    await ae.flush(); ae.close();
+    if (err) throw err;
+  }
+  muxer.finalize();
+  return { blob: new Blob([muxer.target.buffer], { type: 'video/mp4' }), mime: 'video/mp4', note: MK.edit.music && !ac ? '這支手機無法加入音樂，已做成無聲影片。' : '' };
+}
+
+async function mkEncodeB(W, H, tl, g, actx, title, sub) {
+  var type = mkRecorderType();
+  if (!type) throw new Error('這支手機的瀏覽器不支援做影片，請改用其他手機或平板。');
+  var tracks = g.canvas.captureStream(MK_FPS).getVideoTracks(), srcNode = null;
+  if (MK.edit.music && actx) {
+    var buf = await mkAudio(tl.total, actx.sampleRate), dest = actx.createMediaStreamDestination();
+    srcNode = actx.createBufferSource(); srcNode.buffer = buf; srcNode.connect(dest);
+    tracks = tracks.concat(dest.stream.getAudioTracks());
+  }
+  var rec = new MediaRecorder(new MediaStream(tracks), { mimeType: type, videoBitsPerSecond: W >= 1280 ? 2500000 : 1200000 });
+  var chunks = [], done = new Promise(function (r) { rec.onstop = r; });
+  rec.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
+  mkFrame(g, W, H, tl, 0, title, sub);
+  rec.start(1000);
+  var t0 = actx.currentTime + 0.05;
+  if (srcNode) srcNode.start(t0);
+  await new Promise(function (resolve) {
+    function tick() {
+      var t = actx.currentTime - t0;
+      mkFrame(g, W, H, tl, Math.max(0, t), title, sub);
+      $('meProg').value = Math.min(1, t / tl.total);
+      $('meStatus').textContent = '錄製中… ' + Math.max(0, t).toFixed(0) + '／' + tl.total.toFixed(0) + ' 秒，請保持這個畫面';
+      if (t >= tl.total) resolve(); else requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+  rec.stop(); await done;
+  tracks.forEach(function (t) { t.stop(); });
+  var mime = type.indexOf('video/mp4') === 0 ? 'video/mp4' : 'video/webm';
+  return { blob: new Blob(chunks, { type: mime }), mime: mime, note: '' };
+}
+
+document.getElementById('meMake').onclick = async function () {
+  var e = MK.edit, lim = MK.data.limits;
+  if (MK.busy) return;
+  if (e.sel.length < lim.minPhotos) { msg('meMsg', '至少選 ' + lim.minPhotos + ' 張照片'); return; }
+  if (mkSeconds() > mkLimit()) { msg('meMsg', '影片太長，最多 ' + mkLimit() + ' 秒，請減少照片或每張秒數'); return; }
+  var diag = await mkCheck();
+  var useA = e.res === '1280x720' ? diag.a720 : diag.a480;
+  if (!useA && !diag.b) return;
+  // 方式 B 的聲音要在按下按鈕時建立（iPhone 的規定）
+  var actx = null;
+  if (!useA) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); await actx.resume(); } catch (er) { actx = null; } }
+  MK.busy = true; MK.result = null; $('meMake').disabled = true; $('meSend').classList.add('hidden'); msg('meMsg', '');
+  var wake = null;
+  try { wake = await navigator.wakeLock.request('screen'); } catch (er) { wake = null; }
+  try {
+    var items = [];
+    for (var i = 0; i < e.sel.length; i++) {
+      $('meStatus').textContent = '讀取照片 ' + (i + 1) + '／' + e.sel.length + '…'; $('meProg').value = i / e.sel.length * 0.3;
+      items.push({ img: await mkImage(e.sel[i]), caption: e.sel[i].caption, sec: e.sel[i].sec });
+    }
+    mkStage('canvas');
+    var wh = e.res.split('x').map(Number), W = wh[0], H = wh[1], cv = $('meCanvas'); cv.width = W; cv.height = H;
+    var g = cv.getContext('2d'), tl = mkTimeline(items);
+    var title = ($('meName').value || '').trim() || (e.type === '每日' ? 'Day ' + e.day : '我的交流影片');
+    var sub = (S.home.me.group ? '第 ' + S.home.me.group + ' 組　' : '') + S.home.me.name;
+    var t0 = performance.now();
+    var r = useA ? await mkEncodeA(W, H, tl, g, title, sub) : await mkEncodeB(W, H, tl, g, actx, title, sub);
+    if (r.blob.size > lim.maxBytes) throw new Error('影片檔太大，請改選「省流量」畫質再做一次');
+    MK.result = { blob: r.blob, mime: r.mime, seconds: Math.round(tl.total), title: title };
+    var url = URL.createObjectURL(r.blob);
+    mkStage('video', url);
+    $('meProg').value = 1;
+    $('meStatus').textContent = '完成！花了 ' + ((performance.now() - t0) / 1000).toFixed(1) + ' 秒，影片 ' + Math.round(tl.total) + ' 秒、' + (r.blob.size / 1048576).toFixed(1) + ' MB。請先播放看一遍，沒問題就按「儲存影片」。' + (r.note ? r.note : '');
+    $('meSend').classList.remove('hidden');
+  } catch (er) {
+    msg('meMsg', '製作失敗：' + (er && er.message === 'NO_A' ? '這支手機不支援快速製作，請改選「省流量」畫質再試。' : (er && er.message || er)));
+  } finally {
+    MK.busy = false; $('meMake').disabled = false;
+    if (actx) actx.close().catch(function () {});
+    if (wake) wake.release().catch(function () {});
+  }
+};
+
+// ---------------- 送出 ----------------
+async function mkUpload(blob, mime) {
+  var s = await run('startUpload', S.token, ACT.act.id, { type: 'video' }, '影片', mime, blob.size, '原檔', location.origin);
+  var total = blob.size, start = 0, fails = 0;
+  var prog = function (p) { $('meProg').value = p; $('meStatus').textContent = '上傳中… ' + Math.round(p * 100) + '%'; };
+  while (start < total) {
+    var end = Math.min(start + s.chunkSize, total) - 1;
+    try {
+      var res = await fetch(s.sessionUri, { method: 'PUT', headers: { 'Content-Range': 'bytes ' + start + '-' + end + '/' + total }, body: blob.slice(start, end + 1) });
+      if (res.status === 308) { var rg = res.headers.get('Range'); start = rg ? Number(rg.split('-')[1]) + 1 : end + 1; }
+      else if (res.ok) { var fileId = (await res.json()).id; await run('confirmUpload', S.token, s.uploadId, fileId); prog(1); return fileId; }
+      else throw new Error('HTTP ' + res.status);
+      fails = 0; prog(start / total);
+    } catch (er) {
+      if (++fails >= 3) return uploadViaServer(s, blob, start, prog);
+      await sleep(2000 * fails);
+    }
+  }
+}
+
+document.getElementById('meSend').onclick = async function () {
+  var e = MK.edit, r = MK.result;
+  if (!r || MK.busy) return;
+  MK.busy = true; $('meSend').disabled = true; $('meMake').disabled = true; msg('meMsg', '');
+  try {
+    var fileId = await mkUpload(r.blob, r.mime);
+    $('meStatus').textContent = '儲存中…';
+    var out = await run('submitStudentVideo', S.token, ACT.act.id, {
+      type: e.type, day: e.day, title: r.title, fileId: fileId, seconds: r.seconds, replaceId: e.replaceId,
+      sources: e.sel.map(function (s) { return { r: s.r, i: s.i }; })
+    });
+    mkStore(mkDraftKey(e), null);
+    MK.result = null;
+    closeMaker(true);
+  } catch (er) {
+    msg('meMsg', '送出失敗：' + er.message + '（影片還在這支手機上，網路好一點再按一次「儲存影片」）');
+  } finally {
+    MK.busy = false; $('meSend').disabled = false; $('meMake').disabled = false;
+  }
+};
+</script>
+
+<footer><span id="fSchool">© 臺南市安平區安平國民小學</span><br><span id="fContact"></span></footer>
+
+<dialog id="dlg"><div id="dlgBody"></div></dialog>
+<div class="lb" id="lb" onclick="if(event.target.tagName!=='VIDEO'){this.style.display='none';$('lbVid').pause();}"><img id="lbImg" alt=""><video id="lbVid" class="hidden" controls playsinline></video><p id="lbCap"></p></div>
+<div id="busy">稍等一下…</div>
+
+<script>
+var __Q = new URLSearchParams(location.search), START_YEAR = /^\d{3}$/.test(__Q.get('y') || '') ? __Q.get('y') : '', START_ROLE = /^[spt]$/.test(__Q.get('r') || '') ? __Q.get('r') : '', SHOW_TEST = __Q.get('test') === '1';
+var H = null, ME = null, TOKEN = '', ROLE = '';
+var ROLE_NAME = { s: '學生', p: '家長', t: '教師' };
+function $(id) { return document.getElementById(id); }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function store(k, v) { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} }
+function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+
+/** 呼叫後端；遇到「同時執行太多」等暫時性錯誤自動等 1～3 秒重試，最多 5 次。 */
+function api(fn, args, ok, fail, tries) {
+  tries = tries || 0;
+  if (tries === 1) $('busy').style.display = 'block';
+  var r = google.script.run.withSuccessHandler(function (x) { $('busy').style.display = 'none'; ok && ok(x); })
+    .withFailureHandler(function (e) {
+      var m = (e && e.message) || String(e);
+      if (tries < 5 && /simultaneous|too many|同時|Service invoked too many|timed out|NetworkError|伺服器錯誤|try again|連線失敗|系統忙碌/i.test(m)) {
+        return setTimeout(function () { api(fn, args, ok, fail, tries + 1); }, 1000 + Math.random() * 2000);
+      }
+      $('busy').style.display = 'none';
+      if (/請重新登入|密碼已變更/.test(m)) { logout(true); }
+      if (fail) fail(m); else alert(m);
+    });
+  r[fn].apply(r, args || []);
+}
+
+// ---------- 首頁 ----------
+function loadHome(year) {
+  api('getPublicHome', [year || '', SHOW_TEST], function (h) {
+    H = h;
+    if (!h.ready) { $('intro').innerHTML = '<span class="muted">網站建置中，敬請期待。</span>'; return; }
+    document.title = h.site.name;
+    $('hTitle').innerHTML = esc(h.site.name) + '<small>' + esc(h.site.school) + '</small>';
+    $('fSchool').textContent = '© ' + h.site.school; $('fContact').textContent = h.site.contact || '';
+    $('intro').innerHTML = h.site.intro ? esc(h.site.intro) : '<span class="muted">安平國小與世界各地學校進行實體與線上交流。</span>';
+    $('years').innerHTML = h.years.map(function (y) { return '<button class="' + (y.year === h.year ? 'on' : '') + '" onclick="loadHome(\'' + y.year + '\')">' + y.year + ' 學年度' + (y.test ? '（測試）' : '') + '</button>'; }).join('');
+    drawActs();
+  });
+}
+function schoolOf(id) { var s = (H.schools || []).filter(function (x) { return x.id === id; })[0]; return s || { name: id, country: '', city: '' }; }
+function img(f, w) { return 'https://lh3.googleusercontent.com/d/' + encodeURIComponent(f) + '=w' + (w || 400); }
+function drawActs() {
+  if (!H.activities.length) { $('acts').innerHTML = '<div class="card muted">' + esc(H.year) + ' 學年度的交流活動資訊即將公布。</div>'; return; }
+  $('acts').innerHTML = H.activities.map(function (a) {
+    var o = a.mode === '線上', sch = a.schools.map(schoolOf);
+    var h = '<div class="card act' + (o ? ' o' : '') + '"><span class="tag' + (o ? ' o' : '') + '">' + esc(a.mode) + '交流</span> ' + (a.state === '展示中' ? '<span class="tag g">已結束</span>' : '') +
+      '<h2 style="margin-top:6px">' + esc(a.name) + '</h2>' +
+      '<div class="muted">' + sch.map(function (s) { return esc([s.country, s.city, s.name].filter(String).join('｜')); }).join('<br>') + '</div>' +
+      '<div class="muted">' + esc(a.start) + '～' + esc(a.end) + '</div>' +
+      (a.intro ? '<p class="intro">' + esc(a.intro) + '</p>' : '');
+    if (a.days.length) h += '<h3>行程</h3><div class="days">' + a.days.map(function (d) { return '<div class="day"><b>第 ' + d.day + ' 天</b>' + esc(d.date) + (d.cities.length ? '｜' + esc(d.cities.join('、')) : '') + '<br>' + esc(d.spots.join('、')) + '</div>'; }).join('') + '</div>';
+    if (a.photos.length) h += '<h3>活動照片</h3><div class="photos">' + a.photos.map(function (p, i) { return '<img loading="lazy" referrerpolicy="no-referrer" src="' + img(p.f, 300) + '" alt="' + esc(p.c) + '" onclick="zoom(\'' + p.f + '\',this.alt)" onerror="this.style.display=\'none\'">'; }).join('') + '</div>';
+    return h + '</div>';
+  }).join('');
+}
+function zoom(f, cap) { $('lbVid').classList.add('hidden'); $('lbImg').classList.remove('hidden'); $('lbImg').src = img(f, 1600); $('lbCap').textContent = cap || ''; $('lb').style.display = 'flex'; }
+
+// ---------- 登入 ----------
+function openLogin(role) {
+  if (ME) { logout(); return; }
+  $('dlgBody').innerHTML = '<h2>登入</h2><p class="muted">請選擇身分</p><div class="roles"><button class="s" onclick="loginForm(\'s\')">學生</button><button class="p" onclick="loginForm(\'p\')">家長</button><button class="t" onclick="loginForm(\'t\')">教師</button></div>' +
+    '<p class="muted">家長請用孩子的班級、座號和孩子的密碼登入。</p><button class="btn" onclick="$(\'dlg\').close()">取消</button>';
+  $('dlg').showModal();
+  if (role) loginForm(role);
+}
+var OPT = null;
+function loginForm(role) {
+  $('dlgBody').innerHTML = '<h2>' + ROLE_NAME[role] + '登入</h2><div id="lfBody" class="muted">讀取中…</div>';
+  api('getLoginOptions', [role, H && H.year || ''], function (o) {
+    OPT = o;
+    var h = '';
+    if (role === 't') {
+      h += '<label class="f"><span>姓名</span><select id="lfT">' + o.teachers.map(function (t) { return '<option value="' + esc(t.id) + '">' + esc(t.name) + '</option>'; }).join('') + '</select></label>';
+    } else {
+      h += '<label class="f"><span>學年度</span><select id="lfY" onchange="reloadRoster(\'' + role + '\')">' + o.years.map(function (y) { return '<option' + (y === o.year ? ' selected' : '') + '>' + y + '</option>'; }).join('') + '</select></label>' +
+        '<label class="f"><span>' + (role === 'p' ? '孩子的班級' : '班級') + '</span><select id="lfC" onchange="fillSeats()"></select></label>' +
+        '<label class="f"><span>' + (role === 'p' ? '孩子的座號' : '座號') + '</span><select id="lfS"></select></label>';
+    }
+    h += '<label class="f"><span>' + (role === 'p' ? '孩子的密碼' : '密碼') + '</span><input id="lfPw" type="password" autocomplete="current-password"' + (role === 't' ? '' : ' inputmode="numeric" maxlength="8"') + '></label>' +
+      '<div class="err" id="lfErr"></div><button class="btn pr" style="background:var(--' + role + ');border-color:var(--' + role + ');color:#fff" id="lfGo" onclick="doLogin(\'' + role + '\')">登入</button> <button class="btn" onclick="$(\'dlg\').close()">取消</button>';
+    $('lfBody').outerHTML = h;
+    if (role !== 't') fillClasses();
+    $('lfPw').onkeydown = function (e) { if (e.key === 'Enter') doLogin(role); };
+  }, function (m) { $('lfBody').textContent = m; });
+}
+function reloadRoster(role) { api('getLoginOptions', [role, $('lfY').value], function (o) { OPT = o; fillClasses(); }); }
+function fillClasses() {
+  var cls = Object.keys(OPT.classes || {}).sort();
+  $('lfC').innerHTML = cls.length ? cls.map(function (c) { return '<option>' + esc(c) + '</option>'; }).join('') : '<option value="">（沒有參加名單）</option>';
+  fillSeats();
+}
+function fillSeats() {
+  var list = (OPT.classes || {})[$('lfC').value] || [];
+  $('lfS').innerHTML = list.map(function (s) { return '<option value="' + esc(s.seat) + '">' + esc(Number(s.seat) + ' 號 ' + s.name) + '</option>'; }).join('');
+}
+function doLogin(role) {
+  var who = role === 't' ? { teacherId: $('lfT').value } : { year: $('lfY').value, cls: $('lfC').value, seat: $('lfS').value };
+  $('lfGo').disabled = true; $('lfErr').textContent = '';
+  api('login', [role, who, $('lfPw').value], function (r) {
+    TOKEN = r.token; store('ax_token', TOKEN); $('dlg').close(); showMe(r.me);
+  }, function (m) { $('lfErr').textContent = m; $('lfGo').disabled = false; });
+}
+function logout(silent) {
+  if (!silent && !confirm('確定要登出？')) return;
+  if (ACT) closeAct();
+  TOKEN = ''; ME = null; store('ax_token', null);
+  document.body.className = ''; $('mine').classList.add('hidden'); $('btnLogin').textContent = '登入';
+}
+
+// ---------- 登入後 ----------
+function showMe(me) {
+  ME = me; ROLE = me.role;
+  document.body.className = 'r-' + me.role;
+  $('btnLogin').textContent = '登出';
+  var who = me.role === 't' ? esc(me.name) + ' 老師' : (me.role === 'p' ? esc(me.name) + ' 的家長' : esc(me.name) + (me.cls ? '（' + esc(me.cls) + ' 班）' : ''));
+  var h = '<div class="rolebar"><b>' + ROLE_NAME[me.role] + '｜' + who + '</b>' + (me.role === 't' ? '<button onclick="pwForm()">改密碼</button>' : '') + '<button onclick="logout()">登出</button></div>';
+  h += '<h2>' + (me.role === 't' ? '我負責的活動' : me.role === 'p' ? '孩子參加的國際交流' : '我參加的國際交流') + '</h2>';
+  h += me.acts.length ? me.acts.map(function (a) {
+    var o = a.mode === '線上';
+    return '<div class="card act' + (o ? ' o' : '') + '"><span class="tag' + (o ? ' o' : '') + '">' + esc(a.year) + ' 學年度｜' + esc(a.mode) + '交流</span>' + (a.state !== '進行中' ? ' <span class="tag g">' + esc(a.state) + '</span>' : '') +
+      '<h3 style="margin:6px 0 2px">' + esc(a.name) + '</h3><div class="muted">' + esc(a.schools.join('、')) + '｜' + esc(a.start) + '～' + esc(a.end) +
+      (a.group ? '｜第 ' + esc(a.group) + ' 組' : '') + (a.role ? '｜' + esc(a.role) : '') + '</div>' +
+      (me.role !== 't' && a.keepUntil ? '<div class="muted">可查看到 ' + esc(a.keepUntil) + '</div>' : '') +
+      (o ? '<p class="muted" style="margin-bottom:0">線上交流內容即將開放。</p>' : '<p style="margin:8px 0 0"><button class="sbtn pr" onclick="openAct(\'' + esc(a.id) + '\')">進入活動 →</button></p>') + '</div>';
+  }).join('') : '<div class="card muted">目前沒有活動。</div>';
+  $('mine').innerHTML = h; $('mine').classList.remove('hidden');
+  window.scrollTo(0, 0);
+}
+function pwForm() {
+  $('dlgBody').innerHTML = '<h2>修改密碼</h2><label class="f"><span>原密碼</span><input id="pwOld" type="password"></label><label class="f"><span>新密碼（8～32 碼）</span><input id="pwNew" type="password"></label><div class="err" id="pwErr"></div>' +
+    '<button class="btn pr" onclick="api(\'changeTeacherPassword\',[TOKEN,$(\'pwOld\').value,$(\'pwNew\').value],function(t){TOKEN=t;store(\'ax_token\',t);$(\'dlg\').close();alert(\'已修改\');},function(m){$(\'pwErr\').textContent=m;})">儲存</button> <button class="btn" onclick="$(\'dlg\').close()">取消</button>';
+  $('dlg').showModal();
+}
+
+$('dlg').addEventListener('close', function () { $('dlg').classList.remove('wide'); });
+
+// ---------- 啟動 ----------
+loadHome(START_YEAR);
+TOKEN = load('ax_token') || '';
+if (TOKEN) api('getMe', [TOKEN], showMe, function () { logout(true); });
+else if (START_ROLE) setTimeout(function () { openLogin(START_ROLE); }, 300);
+
+// ---------- 第 1 步測試工具 ----------
+function runLoad(n) {
+  var ms = Number($('ms').value) || 0, out = $('loadOut'), done = 0, ok = [], errs = {}, t0 = Date.now();
+  out.innerHTML = '<p>送出 ' + n + ' 個請求中…</p>';
+  function finish() {
+    if (++done < n) return;
+    var maxC = 0;
+    ok.forEach(function (a) { var c = ok.filter(function (b) { return b.start < a.end && b.end > a.start; }).length; if (c > maxC) maxC = c; });
+    var w = ok.map(function (r) { return r.rtt; }).sort(function (a, b) { return a - b; });
+    out.innerHTML = '<p>成功 ' + ok.length + ' / ' + n + '，失敗 ' + (n - ok.length) + '，伺服器上最多同時執行 ' + maxC + '，等待中位數 ' + (w.length ? (w[Math.floor(w.length / 2)] / 1000).toFixed(1) : '-') + ' 秒、最長 ' + (w.length ? (w[w.length - 1] / 1000).toFixed(1) : '-') + ' 秒，全部 ' + ((Date.now() - t0) / 1000).toFixed(1) + ' 秒</p>' +
+      Object.keys(errs).map(function (k) { return '<p style="color:var(--bad)">' + esc(k) + '（' + errs[k] + ' 次）</p>'; }).join('');
+  }
+  for (var i = 0; i < n; i++) (function () {
+    var s = Date.now();
+    google.script.run.withSuccessHandler(function (r) { r.rtt = Date.now() - s; ok.push(r); finish(); })
+      .withFailureHandler(function (e) { var m = (e && e.message) || String(e); errs[m] = (errs[m] || 0) + 1; finish(); }).probe(ms);
+  })();
+}
+function showShare() {
+  var id = $('fid').value.trim(); if (!/^[\w-]{20,80}$/.test(id)) { alert('檔案 ID 格式不對'); return; }
+  var urls = [['縮圖網址 A（lh3）', 'https://lh3.googleusercontent.com/d/' + id + '=w400'], ['縮圖網址 B（drive thumbnail）', 'https://drive.google.com/thumbnail?id=' + id + '&sz=w400']];
+  $('shareOut').innerHTML = '';
+  urls.forEach(function (u, i) {
+    var div = document.createElement('div'); div.innerHTML = '<p><b>' + u[0] + '</b>：<span id="st' + i + '">載入中…</span></p>';
+    var im = new Image(); im.style.maxWidth = '100%'; im.referrerPolicy = 'no-referrer';
+    im.onload = function () { $('st' + i).innerHTML = '<span style="color:var(--ok)">看得到 ✓</span>'; };
+    im.onerror = function () { $('st' + i).innerHTML = '<span style="color:var(--bad)">看不到 ✗</span>'; };
+    im.src = u[1]; div.appendChild(im); $('shareOut').appendChild(div);
+  });
+}
+
+</script>
+</body>
+</html>
