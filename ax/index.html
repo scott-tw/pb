@@ -202,6 +202,7 @@ function workCard(w, opts) {
   opts = opts || {};
   var t = taskOf(w.taskId);
   var h = '<div class="work"><b>第 ' + w.day + ' 天｜' + esc(taskTitle(t)) + '</b> <span class="badge ' + (STATE_BADGE[w.state] || '') + '">' + esc(w.state) + '</span>';
+  if (w.state === '隱藏' && ACT.role === 's') return h + '<p class="muted">這則作業被老師隱藏了，有問題請問老師。</p>' + (w.comment ? '<div class="comment">老師：' + esc(w.comment) + '</div>' : '') + '</div>';
   h += '<div class="thumbs">' + (w.kind === '影片' ? w.files.map(function (f) { return '<div class="vt" onclick="playMedia(\'' + f + '\')">▶</div>'; }).join('')
     : (w.views.length ? w.views : w.files).map(function (f) { return '<img data-v="' + esc(f) + '" alt="" onclick="zoomView(this)">'; }).join('')) + '</div>';
   h += '<dl>' + SIX.filter(function (s) { return w[s[0]]; }).map(function (s) { return '<dt>' + s[1] + '</dt><dd>' + esc(w[s[0]]) + '</dd>'; }).join('') + '</dl>';
@@ -377,7 +378,7 @@ async function playMedia(f) {
 // ---------- 教師：繳交情形 ----------
 function drawStats() {
   var st = ACT.stats, tasks = ACT.itinerary.filter(function (t) { return t.slot !== '住宿'; }), req = tasks.filter(function (t) { return t.required; });
-  var h = '<p class="muted">必交任務 ' + req.length + ' 個。點學生可以看作業、寫意見或隱藏。</p><div class="card" style="padding:6px 12px">';
+  var h = '<p class="muted">必交任務 ' + req.length + ' 個。點學生可以看他交的所有作業（必交和非必交），寫意見或隱藏；隱藏後家長看不到，學生只看到「被老師隱藏」的提示。</p><div class="card" style="padding:6px 12px">';
   h += st.students.map(function (s) {
     var done = 0, wait = 0;
     tasks.forEach(function (t) { var v = st.done[t.id + '|' + s.sid]; if (v === '完成' && t.required) done++; if (v === '待補文字') wait++; });
