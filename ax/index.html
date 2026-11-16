@@ -165,7 +165,8 @@ function drawAct() {
   var h = '<div class="rolebar"><button onclick="closeAct()">← 返回</button><b>' + esc(a.name) + '</b></div>' +
     '<div class="muted" style="margin:-6px 0 10px">' + esc(a.year) + ' 學年度｜' + esc(a.mode) + '交流｜' + esc(a.start) + '～' + esc(a.end) +
     (ACT.group ? '｜第 ' + esc(ACT.group) + ' 組' : '') + (ACT.teacherRole ? '｜' + esc(ACT.teacherRole) : '') +
-    (r === 's' ? (ACT.canUpload ? (a.uploadUntil ? '｜上傳到 ' + esc(a.uploadUntil) : '') : '｜<b>目前不能上傳</b>') : '') + '</div>' +
+    (r === 's' && !ACT.readOnly ? (ACT.canUpload ? (a.uploadUntil ? '｜上傳到 ' + esc(a.uploadUntil) : '') : '｜<b>目前不能上傳</b>') : '') + '</div>' +
+    (ACT.readOnly ? '<div class="warn">這個學年度已設為唯讀：可以看，但不能上傳或修改。</div>' : '') +
     '<div class="tabs">' + tabs.map(function (t) { return '<button class="' + (t[0] === TAB ? 'on' : '') + '" onclick="TAB=\'' + t[0] + '\';drawAct()">' + t[1] + '</button>'; }).join('') + '</div><div id="tabBody"></div>';
   $('actView').innerHTML = h;
   ({ it: drawItin, w: drawWorks, st: drawStats, al: drawAlbum, v: drawVideos })[TAB]();
@@ -395,7 +396,7 @@ function showStudent(sid, name) {
   CUR_STU = { sid: sid, name: name };
   api('getStudentWorks', [TOKEN, ACT.act.id, sid], function (ws) {
     $('dlg').classList.add('wide');
-    $('dlgBody').innerHTML = '<h2>' + esc(name) + ' 的作業</h2>' + (ws.length ? ws.map(function (w) { return workCard(w, { review: true }); }).join('') : '<p class="muted">還沒有作業。</p>') +
+    $('dlgBody').innerHTML = '<h2>' + esc(name) + ' 的作業</h2>' + (ws.length ? ws.map(function (w) { return workCard(w, { review: !ACT.readOnly }); }).join('') : '<p class="muted">還沒有作業。</p>') +
       '<button class="btn" onclick="$(\'dlg\').close();reloadAct()">關閉</button>';
     if (!$('dlg').open) $('dlg').showModal();
     loadViews();
@@ -416,7 +417,7 @@ function drawAlbum() {
   Object.keys(d).map(Number).sort(function (a, b) { return a - b; }).forEach(function (k) {
     h += '<div class="dayh">' + (k ? '第 ' + k + ' 天' : '其他') + '</div><div class="agrid">' + d[k].map(function (it) {
       var flag = r === 't' ? (it.hidden ? '隱藏' : it.pub ? '公開' : '') : '';
-      var click = r === 't' ? 'albumMenu(\'' + it.id + '\')' : (it.kind === '影片' ? 'playMedia(\'' + it.file + '\')' : 'zoomAlbum(\'' + it.id + '\')');
+      var click = r === 't' && !ACT.readOnly ? 'albumMenu(\'' + it.id + '\')' : (it.kind === '影片' ? 'playMedia(\'' + it.file + '\')' : 'zoomAlbum(\'' + it.id + '\')');
       var tile = it.kind === '影片' ? '<div class="vtile" onclick="' + click + '">▶</div>'
         : (it.pub && !it.hidden ? '<img loading="lazy" referrerpolicy="no-referrer" src="' + img(it.file, 300) + '" onclick="' + click + '" alt="' + esc(it.caption) + '">'
           : '<img data-v="' + esc(it.view || it.file) + '" onclick="' + click + '" alt="' + esc(it.caption) + '">');
@@ -500,7 +501,7 @@ function videoCard(v, opts) {
       (v.share === '申請' || v.share === '通過' ? '<button class="sbtn" onclick="shareVid(\'' + v.id + '\',false)">不給同學看</button> ' : '<button class="sbtn" onclick="shareVid(\'' + v.id + '\',true)">想給同學看</button> ') +
       '<button class="sbtn bad" onclick="delVideo(\'' + v.id + '\')">刪除</button>';
   }
-  if (opts.teacher) {
+  if (opts.teacher && !ACT.readOnly) {
     h += '<button class="sbtn" onclick="reviewVid(\'' + v.id + '\',true)">' + (v.share === '通過' ? '維持同意' : '同意給同學看') + '</button> <button class="sbtn bad" onclick="reviewVid(\'' + v.id + '\',false)">不同意</button>';
   }
   return h + '</div></div>';
