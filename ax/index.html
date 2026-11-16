@@ -179,7 +179,7 @@ function worksFor(taskId) { return (ACT.works || []).filter(function (w) { retur
 // ---------- 行程 ----------
 function drawItin() {
   if (!ACT.itinerary.length) { $('tabBody').innerHTML = '<div class="card muted">行程還沒有排好。</div>'; return; }
-  var d = byDay(ACT.itinerary), h = '';
+  var d = byDay(ACT.itinerary), h = ACT.canSetRequired ? '<p class="muted">你是這個活動的負責人，可以按各任務右邊的按鈕決定哪些要必交。</p>' : '';
   Object.keys(d).map(Number).sort(function (a, b) { return a - b; }).forEach(function (k) {
     var first = d[k][0];
     h += '<div class="dayh">第 ' + k + ' 天' + (first.date ? '｜' + esc(first.date) : '') + '</div>';
@@ -191,11 +191,14 @@ function drawItin() {
         '<div class="meta">' + esc([t.city, t.lodging ? '住：' + t.lodging : ''].filter(String).join('｜')) + '</div>' +
         (t.note ? '<div class="meta">' + esc(t.note) + '</div>' : '') +
         (ACT.works && !lodging ? '<div class="meta">' + (mine.length ? '已交 ' + mine.length + ' 則' + (mine.some(function (w) { return w.state === '待補文字'; }) ? '（有待補文字）' : '') : '還沒交') + '</div>' : '') +
-        '</div>' + (ACT.role === 's' && ACT.canUpload && !lodging ? '<button class="sbtn pr" onclick="workForm(\'' + t.id + '\')">＋ 交作業</button>' : '') + '</div></div>';
+        '</div>' + (ACT.role === 's' && ACT.canUpload && !lodging ? '<button class="sbtn pr" onclick="workForm(\'' + t.id + '\')">＋ 交作業</button>' : '') +
+        (ACT.canSetRequired && !lodging ? '<button class="sbtn' + (t.required ? '' : ' pr') + '" onclick="setReq(\'' + t.id + '\',' + !t.required + ')">' + (t.required ? '取消必交' : '設為必交') + '</button>' : '') + '</div></div>';
     });
   });
   $('tabBody').innerHTML = h;
 }
+
+function setReq(id, on) { api('setTaskRequired', [TOKEN, ACT.act.id, id, on], reloadAct); }
 
 // ---------- 作業 ----------
 function workCard(w, opts) {
