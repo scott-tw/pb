@@ -25,7 +25,7 @@
 })();
 </script>
 <meta charset="utf-8">
-<!-- 校園點數銀行｜新版學生、教師介面（網址加 ?ui=new）。後端函式與原版（Index.html）完全相同。 -->
+<!-- 校園點數銀行｜新版學生、教師介面（導師、科任、處室、學生的預設畫面；管理員、名冊管理加 ?ui=new）。後端函式與原版（Index.html）完全相同。 -->
 <style>
   :root {
     --bg:#f4f1ff; --card:#fff; --ink:#28224a; --mute:#7a7396; --line:#e8e3fb;
@@ -54,7 +54,8 @@
   .tabs button { position:relative; }
   .rep table { width:100%; border-collapse:collapse; font-size:14px; }
   .rep th, .rep td { text-align:left; padding:6px; border-bottom:1px solid var(--line); }
-  .rep td.n, .rep th.n { text-align:right; }
+  .rep th, .rep td, .rep td.n { text-align:center; }   /* 報表：標題與內容置中 */
+  .rep th:first-child, .rep td:first-child { text-align:left; }   /* 第一欄（類型、班級、座號、項目）靠左 */
   .rep h3 { font-size:16px; margin:16px 0 6px; }
   .scrollx { overflow-x:auto; }
   .frm label { display:block; font-weight:700; font-size:14px; margin-top:10px; }
@@ -89,6 +90,7 @@
   .hero .sub { color:var(--mute); font-size:14px; }
   .pill { display:inline-flex; align-items:center; gap:6px; border-radius:999px; padding:6px 12px; font-size:14px; margin-top:8px; }
   .pill.warn { background:#fff3dc; color:#9a5b00; }
+  .field.need { border-color:#e0a030; background:#fffaf0; }
   .pill.red { background:#ffe6e8; color:#b3263a; }
 
   /* 大按鈕 */
@@ -272,6 +274,42 @@
     #oPrizeList { display:grid; grid-template-columns:1fr 1fr; gap:0 16px; }
     .pzc { width:150px; }
   }
+  /* ── 三品劍獅榮譽（2026-11-23）── */
+  .hon { display:flex; gap:14px; align-items:center; }
+  .shield { flex:none; width:84px; height:96px; position:relative; }
+  .shield svg { width:100%; height:100%; display:block; }
+  .shield .lv { position:absolute; left:0; right:0; top:56px; text-align:center; color:#fff; font-weight:900; font-size:15px; text-shadow:0 1px 2px rgba(0,0,0,.35); }
+  .shield .face { position:absolute; left:0; right:0; top:14px; text-align:center; font-size:36px; line-height:1; }
+  .hon .nm { font-size:22px; font-weight:900; line-height:1.2; }
+  .hon .hint { font-size:14px; color:var(--mute); margin-top:2px; }
+  .hon .prog { height:12px; margin-top:8px; }
+  .hon .prog i { background:linear-gradient(90deg,#ffb020,#ff7a45); }
+  .tri3 { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:12px; }
+  .tri3 .b { background:var(--bg); border-radius:14px; padding:8px 6px; text-align:center; }
+  .tri3 .b .e { font-size:24px; line-height:1.1; }
+  .tri3 .b .e.off { filter:grayscale(1); opacity:.4; }
+  .tri3 .b .t { font-size:13px; font-weight:800; }
+  .tri3 .b .p { font-size:12px; color:var(--mute); }
+  .tri3 .b .need { font-size:12px; color:#b3263a; font-weight:700; }
+  .ladder .lvr { display:flex; gap:12px; align-items:center; padding:10px 0; border-bottom:1px dashed var(--line); }
+  .ladder .lvr .n { flex:none; width:44px; height:44px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-weight:900; color:#fff; font-size:16px; }
+  .ladder .lvr.lock .n { background:#d9d5e8 !important; color:#8a84a3; }
+  .ladder .lvr.cur { background:#fff8e6; border-radius:14px; padding:10px 8px; border-bottom:none; box-shadow:0 0 0 2px var(--sun) inset; }
+  .ladder .lvr .main { flex:1; min-width:0; }
+  .ladder .lvr .main b { font-size:16px; }
+  .ladder .lvr .r { font-size:13px; color:var(--mute); }
+  .ladder .lvr .st { flex:none; font-size:13px; font-weight:800; }
+  .lvtag { display:inline-block; border-radius:999px; padding:0 6px; font-size:11px; font-weight:800; color:#fff; margin-top:2px; }
+  .seat.on .lvtag { background:rgba(255,255,255,.3) !important; }
+  .seat .up { position:absolute; left:4px; top:2px; font-size:14px; }
+  .celebrate .lvup { font-size:26px; font-weight:900; margin-top:6px; }
+  @media (min-width: 900px) {
+    #s-home > .c-honor { grid-column:1; margin-top:0; }
+    #s-honor:not([hidden]) { display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start; }
+    #s-honor > .hero { grid-column:1 / -1; }
+    #s-honor > .c-ladder { grid-column:2; grid-row:2 / span 2; margin-top:0; }
+    #s-honor > .c-tri { grid-column:1; margin-top:0; }
+  }
 </style>
 </head>
 <body data-k="" data-classic="" data-ss="1" data-cls="">
@@ -327,6 +365,11 @@
       <div class="sub" id="sInfo"></div>
       <div id="sAlerts"></div>
     </div>
+    <div class="card c-honor" id="sHonorCard" hidden onclick="go('s-honor')" style="cursor:pointer">
+      <h2>🦁 我的榮譽 <button class="link" onclick="event.stopPropagation();go('s-honor')">等級表 ›</button></h2>
+      <div class="hon"><div class="shield" id="hShield"></div><div style="flex:1;min-width:0"><div class="nm" id="hName"></div><div class="hint" id="hHint"></div><div class="prog"><i id="hBar" style="width:0"></i></div></div></div>
+      <div class="tri3" id="hTri"></div>
+    </div>
     <div class="card" id="kCard" hidden style="border:3px solid var(--sun)">
       <h2>🎉 發現一張點數卡！</h2>
       <div class="mute">卡號 <b id="kCode"></b></div>
@@ -346,6 +389,23 @@
     <div class="card c-recent">
       <h2>最近的紀錄 <button class="link" onclick="go('s-log')">全部 ›</button></h2>
       <div id="sRecent"></div>
+    </div>
+  </section>
+
+  <section id="s-honor" class="wide" hidden>
+    <div class="hero">
+      <div class="lbl">三品劍獅榮譽</div>
+      <div class="hon" style="margin-top:6px"><div class="shield" id="h2Shield"></div><div style="flex:1;min-width:0"><div class="nm" id="h2Name"></div><div class="hint" id="h2Hint"></div><div class="prog"><i id="h2Bar" style="width:0"></i></div><div class="hint" id="h2Sub"></div></div></div>
+    </div>
+    <div class="card c-tri">
+      <h2>三品徽章</h2>
+      <div class="mute">學習有品質（真）、人人有品格（善）、生活有品味（美）。每一品集到 <span id="h2Tiers"></span> 點，徽章就會升級成銅、銀、金。</div>
+      <div class="tri3" id="h2Tri"></div>
+      <div class="mute" style="margin-top:10px">榮譽點數是你從入學到畢業<b>得到</b>的點數總和，拿去換獎品也不會減少，只會一直往上長。</div>
+    </div>
+    <div class="card c-ladder ladder">
+      <h2>升級之路</h2>
+      <div id="h2Ladder"></div>
     </div>
   </section>
 
@@ -384,6 +444,7 @@
         <h2 style="margin:0">① 選學生 <span class="mute" id="tPicked" style="font-weight:600;margin-left:6px"></span></h2>
         <div><button class="ghost small" onclick="pickAll(true)">全班</button> <button class="ghost small" onclick="pickAll(false)">清除</button></div>
       </div>
+      <div class="pill warn" id="tHonorUp" hidden style="border-radius:12px;margin:0 0 8px;display:block"></div>
       <div class="seats" id="tSeats"></div>
     </div>
     <div class="card c-items">
@@ -13114,6 +13175,7 @@ function loadHome(keep){
       MODE = MODES.indexOf(saved) >= 0 ? saved : MODES[0];
     }
     $('classicLink').href = CLASSIC || '#';
+    $('classicLink').hidden = !CLASSIC && !STUDENT_SITE;   // 一般老師沒有「完整版」按鈕
     if (STUDENT_SITE) {
       $('classicLink').hidden = false; $('classicLink').textContent = '登出';
       $('classicLink').onclick = function(e){ e.preventDefault(); sheet('要登出嗎？', '<div class="sum">登出後要再輸入密碼才能進來。用學校平板時，用完一定要登出。</div>', '登出', function(){ logout('已登出'); }); };
@@ -13136,7 +13198,7 @@ function applyMode(keep){
   var rep = V.report ? [['x-report','📊','報表']] : [];
   if (MODE === 'student') {
     $('hi').textContent = '嗨，' + V.student.name + '！';
-    buildTabs([['s-home','🏠','首頁'],['s-shop','🎁','獎品'],['s-ticket','🎟️','兌換券'],['s-log','📜','紀錄']]);
+    buildTabs([['s-home','🏠','首頁'],['s-honor','🦁','榮譽'],['s-shop','🎁','獎品'],['s-ticket','🎟️','兌換券'],['s-log','📜','紀錄']]);
     if (URL_K) { $('kCode').textContent = fmtCode(URL_K); $('kCard').hidden = false; }
   } else if (MODE === 'teacher') {
     $('hi').textContent = h.name + ' 老師';
@@ -13186,10 +13248,77 @@ function renderStudent(s){
   if (s.expiringPoints) a += '<div class="pill warn">⏰ 有 ' + s.expiringPoints + ' 點會在 ' + esc(s.expiringDate) + ' 到期，記得用掉！</div>';
   if (s.graduation) a += '<div class="pill red">🎓 畢業後點數會歸零，請在 ' + esc(s.graduation) + ' 前用完</div>';
   $('sAlerts').innerHTML = a;
+  if (s.honor) renderHonor(s.honor, s);
   $('sRecent').innerHTML = s.recent.slice(0, 5).map(recRow).join('') || '<div class="empty"><div class="em">🌱</div>還沒有紀錄，好好表現就能得到點數喔！</div>';
   renderLog();
 }
-var LOGF = '';
+// ═════════ 三品劍獅榮譽（2026-11-23）═════════
+var TRI_EM = { '真':'⭐', '善':'💗', '美':'🌸' };
+var TIER_NM = ['還沒解鎖', '銅', '銀', '金'];
+function lvColor(lv, max){
+  var c = ['#c98a4b','#b0743c','#9aa4b5','#e0a800','#14b88a','#2f9bff','#6c4cf1','#a24cf1','#ef6a3a','#ff3d71'];
+  if (!max || max <= 1) return c[0];
+  return c[Math.min(c.length - 1, Math.round((lv - 1) / (max - 1) * (c.length - 1)))];
+}
+function shieldSvg(lv, max){
+  var col = lvColor(lv, max);
+  return '<svg viewBox="0 0 84 96" aria-hidden="true">' +
+    '<path d="M42 3 L78 15 V46 C78 70 62 85 42 93 C22 85 6 70 6 46 V15 Z" fill="' + col + '" stroke="#fff" stroke-width="3"/>' +
+    '<path d="M42 10 L71 20 V46 C71 65 58 78 42 85" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="3"/>' +
+    (lv >= max && max > 1 ? '<path d="M24 12 L32 3 L42 12 L52 3 L60 12" fill="none" stroke="#ffd34d" stroke-width="4" stroke-linejoin="round"/>' : '') + '</svg>' +
+    '<div class="face">🦁</div><div class="lv">Lv.' + lv + '</div>';
+}
+function honorHint(h){
+  if (!h.next) return '你已經是最高等級，太厲害了！';
+  var n = h.next, lack = [];
+  ['真','善','美'].forEach(function(t){ if (n.needTri[t] > 0) lack.push(TRI_EM[t] + t + ' ' + n.needTri[t] + ' 點'); });
+  if (n.needTotal > 0 && !lack.length) return '再 ' + n.needTotal + ' 點晉級「' + n.name + '」';
+  if (n.needTotal > 0) return '再 ' + n.needTotal + ' 點，並補上 ' + lack.join('、') + '，晉級「' + n.name + '」';
+  return '再拿 ' + lack.join('、') + '，就能晉級「' + n.name + '」';
+}
+function triHtml(h){
+  return h.badges.map(function(b){
+    var nx = h.tiers[b.tier], need = h.next && h.next.needTri[b.tri] > 0 ? '<div class="need">晉級還差 ' + h.next.needTri[b.tri] + '</div>' : '';
+    return '<div class="b"><div class="e' + (b.tier ? '' : ' off') + '">' + TRI_EM[b.tri] + '</div><div class="t">' + esc(b.badge) + (b.tier ? '・' + TIER_NM[b.tier] : '') + '</div>' +
+      '<div class="p"><b>' + b.points + '</b> 點</div><div class="p">' + (nx ? TIER_NM[b.tier + 1] + '徽章 ' + nx : '已滿級') + '</div>' + need + '</div>';
+  }).join('');
+}
+function renderHonor(h, s){
+  HONOR_MAX = h.maxLevel;
+  $('sHonorCard').hidden = false;
+  $('hShield').innerHTML = $('h2Shield').innerHTML = shieldSvg(h.level, h.maxLevel);
+  $('hName').textContent = $('h2Name').textContent = h.name;
+  $('hHint').textContent = $('h2Hint').textContent = honorHint(h);
+  $('hBar').style.width = $('h2Bar').style.width = h.pct + '%';
+  $('h2Sub').textContent = '榮譽點數 ' + h.total + ' 點・第 ' + h.level + '／' + h.maxLevel + ' 級・榮譽百分百摸彩券 ' + h.tickets + ' 張';
+  $('hTri').innerHTML = $('h2Tri').innerHTML = triHtml(h);
+  $('h2Tiers').textContent = h.tiers.join('、');
+  $('h2Ladder').innerHTML = h.levels.slice().reverse().map(function(l){
+    var reached = l.level <= h.level, cur = l.level === h.level;
+    var req = l.points + ' 點' + (l.min ? '・三品各 ' + l.min : '');
+    var st = cur ? '<span class="st" style="color:#9a5b00">你在這裡</span>' : reached ? '<span class="st" style="color:var(--mint)">✓ 達成</span>' : '<span class="st mute">🔒</span>';
+    return '<div class="lvr' + (cur ? ' cur' : reached ? '' : ' lock') + '"><div class="n" style="background:' + lvColor(l.level, h.maxLevel) + '">' + l.level + '</div><div class="main"><b>' + esc(l.name) + '</b><div class="r">' + req + (l.reward ? '｜' + esc(l.reward) : '') + '</div></div>' + st + '</div>';
+  }).join('');
+  // 晉級動畫：每次晉級只播一次（記在這台裝置）
+  if (h.lastUp && s) {
+    var key = 'pb_honor_' + s.classCode + '_' + s.seat, seen = 0;
+    try { seen = Number(localStorage.getItem(key)) || 0; } catch (e) {}
+    if (h.lastUp.level > seen) {
+      try { localStorage.setItem(key, String(h.level)); } catch (e) {}
+      setTimeout(function(){ levelUpShow(h); }, 400);
+    }
+  }
+}
+function levelUpShow(h){
+  if (document.querySelector('.celebrate')) return;
+  celebrate('晉級！', '');
+  var box = document.querySelector('.celebrate .box');
+  if (!box) return;
+  box.querySelector('.em').innerHTML = '<div class="shield" style="margin:0 auto">' + shieldSvg(h.level, h.maxLevel) + '</div>';
+  box.querySelector('.plus').style.color = lvColor(h.level, h.maxLevel);
+  box.children[2].innerHTML = '<div class="lvup">' + esc(h.name) + '</div><div class="mute">' + esc(h.levels[h.level - 1].reward || '繼續加油，下一級在等你！') + '</div>';
+}
+var LOGF = '', HONOR_MAX = 10;
 function renderLog(){
   var all = HOME.views.student.recent;
   var opts = [['', '全部'], ['up', '得到'], ['down', '用掉']];
@@ -13317,28 +13446,34 @@ function curPool(){ return tv().pools.filter(function(p){ return p.id === T.pool
 function pickPool(){ T.pool = $('tPool').value; showPool(); }
 function showPool(){
   var p = curPool();
-  $('tPoolName').textContent = p ? '可用額度：' + poolName(p) + '（' + p.period + '）' : '目前沒有可用額度，請洽管理員';
+  $('tPoolName').textContent = (p ? '可用額度：' + poolName(p) + '（' + p.period + '）' : '目前沒有可用額度，請洽管理員') + (HOME && HOME.termNote ? '｜' + HOME.termNote : '');
   $('tRemain').textContent = p ? p.remain : 0;
   $('tLimit').textContent = p ? '/ ' + p.limit : '';
   $('tBar').style.width = p && p.limit ? Math.max(0, Math.min(100, p.remain / p.limit * 100)) + '%' : '0%';
   renderItemChips('tItems', p, T, function(){ updateGo(); });
   updateGo();
 }
-function itemsFor(p){
+function itemsFor(p, noteFree){
   var lv = p ? POOL_LEVEL[p.type] : '班級', all = tv().items.length ? tv().items : (HOME.views.tools || {}).items || [];
+  if (noteFree) all = all.filter(function(i){ return !i.needNote; });   // 掃卡、點數卡沒有備註欄
   var list = all.filter(function(i){ return !i.level || i.level === lv; });
   return list.length ? list : all;
 }
 function renderItemChips(box, p, state, after){
-  var list = itemsFor(p);
+  var list = itemsFor(p, state !== T);
   if (!list.some(function(i){ return i.code === state.item; })) { state.item = list[0] ? list[0].code : ''; state.pts = list[0] ? list[0].points : 1; }
   $(box).innerHTML = list.map(function(i, k){
-    return '<button class="chip' + (i.code === state.item ? ' on' : '') + '" data-c="' + esc(i.code) + '">' + ITEM_EMOJI[k % ITEM_EMOJI.length] + ' ' + esc(i.name) + '</button>';
+    return '<button class="chip' + (i.code === state.item ? ' on' : '') + '" data-c="' + esc(i.code) + '">' + ITEM_EMOJI[k % ITEM_EMOJI.length] + ' ' + esc(i.name) + (i.needNote ? '（需填備註）' : '') + '</button>';
   }).join('') || '<span class="mute">沒有可用的給點項目</span>';
   Array.prototype.forEach.call($(box).children, function(b){
     b.onclick = function(){ var it = list.filter(function(i){ return i.code === b.dataset.c; })[0]; state.item = it.code; state.pts = it.points; renderItemChips(box, p, state, after); };
   });
   var key = box.charAt(0); if ($(key + 'Pts')) $(key + 'Pts').textContent = state.pts;
+  if (state === T && $('tNote')) {   // 需填備註的項目：備註欄標示必填
+    var cur = list.filter(function(i){ return i.code === state.item; })[0];
+    $('tNote').placeholder = cur && cur.needNote ? '備註（必填：寫下給點原因）' : '備註（可不填）';
+    $('tNote').classList.toggle('need', !!(cur && cur.needNote));
+  }
   if (after) after();
 }
 function step(k, d){
@@ -13356,8 +13491,11 @@ function loadRoster(){
     T.roster = list;
     var noCard = list.filter(function(s){ return !s.card; }).length;
     $('tPcInfo').textContent = noCard ? noCard + ' 人還沒有卡' : '全班都有卡';
+    var ups = list.filter(function(s){ return s.newLevel; });
+    $('tHonorUp').hidden = !ups.length;
+    $('tHonorUp').innerHTML = ups.length ? '🎉 本週晉級（記得在班上表揚）：' + ups.map(function(s){ return s.seat + ' 號 ' + esc(s.levelName); }).join('、') : '';
     $('tSeats').innerHTML = list.map(function(s){
-      return '<button class="seat' + (T.picked[s.seat] ? ' on' : '') + '" data-s="' + s.seat + '"><div class="n">' + s.seat + '</div><div class="nm">' + esc(s.name) + '</div><div class="b">' + s.balance + ' 點' + (s.card ? '' : '・無卡') + '</div></button>';
+      return '<button class="seat' + (T.picked[s.seat] ? ' on' : '') + '" data-s="' + s.seat + '"><div class="n">' + s.seat + '</div><div class="nm">' + esc(s.name) + '</div><div class="b">' + s.balance + ' 點' + (s.card ? '' : '・無卡') + '</div>' + (s.level ? '<div class="lvtag" style="background:' + lvColor(s.level, HONOR_MAX) + '" title="' + esc(s.levelName) + '">Lv.' + s.level + '</div>' : '') + (s.newLevel ? '<span class="up" title="7 天內晉級">🎉</span>' : '') + '</button>';
     }).join('') || '<div class="empty">這班沒有在學學生</div>';
     Array.prototype.forEach.call($('tSeats').children, function(b){
       b.onclick = function(){ var n = Number(b.dataset.s); T.picked[n] = !T.picked[n]; b.classList.toggle('on', T.picked[n]); updateGo(); };
@@ -13623,7 +13761,7 @@ function prizeForm(id){
     '<label>照片（可不填，只拍物品、不拍學生）</label><div class="phbox"><div class="pv' + (p.photo ? ' has' : '') + '" id="pfPv"' + (p.photo ? ' style="background-image:url(\'' + esc(p.photo) + '\')"' : '') + '>📷</div><div><label class="ghost small" style="display:inline-block;cursor:pointer">' + (p.photo ? '換一張' : '拍照／選照片') + '<input type="file" accept="image/*" id="pfPhoto" hidden></label>' + (p.photo ? ' <button class="ghost small" type="button" id="pfNoPhoto">移除</button>' : '') + '<div class="mute" style="margin-top:4px">會自動縮小再上傳</div></div></div>' +
     '<label>名稱</label><input class="field" id="pfName" maxlength="40" value="' + esc(p.name) + '" placeholder="例：造型鉛筆">' +
     '<div class="fg3"><div><label>點數</label><input class="field" type="number" inputmode="numeric" id="pfPts" min="1" value="' + esc(p.points) + '"></div><div><label>庫存</label><input class="field" type="number" inputmode="numeric" id="pfStock" min="0" value="' + esc(p.stock) + '"></div><div><label>每人限兌</label><input class="field" type="number" inputmode="numeric" id="pfLimit" min="0" value="' + esc(p.limit) + '" placeholder="0＝不限"></div></div>' +
-    (d.isAdmin ? '<label>提供處室</label><input class="field" id="pfOffice" maxlength="20" value="' + esc(p.office) + '">' : '') +
+    (d.isAdmin ? '<label>提供處室</label><select class="field" id="pfOffice"><option value="">（請選擇）</option>' + d.offices.map(function(o){ return '<option' + (o === p.office ? ' selected' : '') + '>' + esc(o) + '</option>'; }).join('') + '</select>' : '') +
     '<label>領取地點</label><input class="field" id="pfPlace" maxlength="40" value="' + esc(p.place) + '">' +
     '<div class="fg2"><div><label>上架日（空白＝立即）</label><input class="field" type="date" id="pfStart" value="' + esc(p.start) + '"></div><div><label>下架日（空白＝不限）</label><input class="field" type="date" id="pfEnd" value="' + esc(p.end) + '"></div></div>' +
     '<label>說明（可不填）</label><input class="field" id="pfNote" maxlength="100" value="' + esc(p.note) + '">' +
@@ -13672,7 +13810,7 @@ function loadReport(){
   gs('getReport', [{ kind: o.kind, target: o.target, from: r[0], to: r[1] }], function(rep){
     $('rOut').innerHTML = '<h2>' + esc(rep.title) + '</h2><div class="mute">期間 ' + esc(rep.from) + '～' + esc(rep.to) + '・產生時間 ' + esc(rep.made) + '</div>' +
       rep.sections.map(function(sec){
-        return '<h3>' + esc(sec.title) + '</h3>' + (sec.rows.length ? '<div class="scrollx"><table><thead><tr>' + sec.head.map(function(h){ return '<th>' + esc(h) + '</th>'; }).join('') + '</tr></thead><tbody>' +
+        return '<h3>' + esc(sec.title) + '</h3>' + (sec.rows.length ? '<div class="scrollx"><table><thead><tr>' + sec.head.map(function(h, i){ var isNum = sec.rows.some(function(row){ return typeof row[i] === 'number'; }); return '<th' + (isNum ? ' class="n"' : '') + '>' + esc(h) + '</th>'; }).join('') + '</tr></thead><tbody>' +
           sec.rows.map(function(row){ return '<tr>' + row.map(function(v){ return '<td' + (typeof v === 'number' ? ' class="n"' : '') + '>' + esc(v) + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody></table></div>' : '<div class="mute">（沒有資料）</div>') +
           (sec.note ? '<div class="mute">' + esc(sec.note) + '</div>' : '');
       }).join('');
