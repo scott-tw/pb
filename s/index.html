@@ -13174,9 +13174,10 @@ function loginQr(){
   if (!url) { toastErr('管理員還沒有在「設定」填入 STUDENT_URL（學生端網址）'); return; }
   var link = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'cls=' + encodeURIComponent(T.cls);
   sheet(T.cls + ' 班學生登入', '<div class="center">' + qrImgPx(link, 180) + '</div><div class="mute" style="margin:8px 0">學生掃 QR → 點座號 → 輸入密碼。可以列印貼在教室，或投影給全班掃。</div>' +
-    '<div class="lbl2">學生密碼錯太多次被鎖住？</div><div style="display:flex;gap:8px;margin-top:6px"><input class="field" id="ulSeat" type="number" inputmode="numeric" min="1" placeholder="座號" style="margin:0"><button class="ghost" type="button" id="ulGo" style="flex:none">解鎖</button></div>',
+    (HOME.sharedStudents ? '<div class="lbl2">學生密碼錯太多次被鎖住？</div><div class="mute" style="margin-top:4px">連續錯 5 次會鎖 15 分鐘，時間到自動解除，不用解鎖。</div>' :
+    '<div class="lbl2">學生密碼錯太多次被鎖住？</div><div style="display:flex;gap:8px;margin-top:6px"><input class="field" id="ulSeat" type="number" inputmode="numeric" min="1" placeholder="座號" style="margin:0"><button class="ghost" type="button" id="ulGo" style="flex:none">解鎖</button></div>'),
     '🖨️ 列印 QR', function(){ printLoginQr(link); });
-  $('ulGo').onclick = function(){
+  if ($('ulGo')) $('ulGo').onclick = function(){
     var seat = Number($('ulSeat').value);
     if (!seat) { toastErr('請輸入座號'); return; }
     gs('unlockStudentLogin', [T.cls, seat], function(){ toast(T.cls + ' 班 ' + seat + ' 號已解鎖'); $('ulSeat').value = ''; });
