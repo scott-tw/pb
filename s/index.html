@@ -291,6 +291,14 @@
   .tri3 .b .t { font-size:13px; font-weight:800; }
   .tri3 .b .p { font-size:12px; color:var(--mute); }
   .tri3 .b .need { font-size:12px; color:#b3263a; font-weight:700; }
+  .achs { display:grid; grid-template-columns:repeat(auto-fill, minmax(96px, 1fr)); gap:8px; margin-top:10px; }
+  .achs .a { background:var(--bg); border-radius:14px; padding:10px 6px; text-align:center; }
+  .achs .a .e { font-size:28px; line-height:1.15; }
+  .achs .a.off .e { filter:grayscale(1); opacity:.45; }
+  .achs .a .t { font-size:13px; font-weight:800; margin-top:2px; }
+  .achs .a .d { font-size:11px; color:var(--mute); line-height:1.35; margin-top:2px; }
+  .achs .a .pg { height:5px; background:var(--line); border-radius:4px; margin:5px 4px 0; overflow:hidden; }
+  .achs .a .pg i { display:block; height:100%; background:var(--sun); }
   .ladder .lvr { display:flex; gap:12px; align-items:center; padding:10px 0; border-bottom:1px dashed var(--line); }
   .ladder .lvr .n { flex:none; width:44px; height:44px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-weight:900; color:#fff; font-size:16px; }
   .ladder .lvr.lock .n { background:#d9d5e8 !important; color:#8a84a3; }
@@ -403,6 +411,11 @@
       <div class="tri3" id="h2Tri"></div>
       <div class="mute" style="margin-top:10px">榮譽點數是你從入學到畢業<b>得到</b>的點數總和，拿去換獎品也不會減少，只會一直往上長。</div>
     </div>
+    <div class="card c-ach">
+      <h2>成就徽章 <span class="mute" id="h2AchN" style="font-weight:600"></span></h2>
+      <div class="mute">完成挑戰就會解鎖。還沒解鎖的是問號，看看怎麼拿到它！</div>
+      <div class="achs" id="h2Ach"></div>
+    </div>
     <div class="card c-ladder ladder">
       <h2>升級之路</h2>
       <div id="h2Ladder"></div>
@@ -445,6 +458,7 @@
         <div><button class="ghost small" onclick="pickAll(true)">全班</button> <button class="ghost small" onclick="pickAll(false)">清除</button></div>
       </div>
       <div class="pill warn" id="tHonorUp" hidden style="border-radius:12px;margin:0 0 8px;display:block"></div>
+      <div class="pill" id="tFlag" hidden style="border-radius:12px;margin:0 0 8px;display:block;background:#eaf3ff;color:#1d4f9a"></div>
       <div class="seats" id="tSeats"></div>
     </div>
     <div class="card c-items">
@@ -544,6 +558,11 @@
     <div class="hero"><div class="lbl">獎品管理</div><div class="sub" id="oPrizeSub"></div>
       <button class="btn block" onclick="prizeForm()">＋ 新增獎品</button></div>
     <div id="oPrizeList"></div>
+  </section>
+
+  <!-- ═════════ 榮譽管理（學務處、管理員）：摸彩、獎狀、班級劍獅旗 ═════════ -->
+  <section id="x-honor" class="wide" hidden>
+    
   </section>
 
   <!-- ═════════ 報表（教師、處室）═════════ -->
@@ -13195,7 +13214,7 @@ function applyMode(keep){
   var h = HOME, V = h.views;
   document.body.classList.toggle('teacher', MODE === 'teacher');
   document.body.classList.toggle('office', MODE === 'office');
-  var rep = V.report ? [['x-report','📊','報表']] : [];
+  var rep = (V.report ? [['x-report','📊','報表']] : []).concat(V.honorMgr ? [['x-honor','🦁','榮譽']] : []);
   if (MODE === 'student') {
     $('hi').textContent = '嗨，' + V.student.name + '！';
     buildTabs([['s-home','🏠','首頁'],['s-honor','🦁','榮譽'],['s-shop','🎁','獎品'],['s-ticket','🎟️','兌換券'],['s-log','📜','紀錄']]);
@@ -13227,6 +13246,7 @@ function go(id){
   window.scrollTo(0, 0);
   if (id === 't-log') loadGrants();
   if (id === 't-card') loadBatches();
+  if (id === 'x-honor' && typeof hmInit === 'function') hmInit();
 }
 
 // ═════════ 學生 ═════════
@@ -13290,7 +13310,8 @@ function renderHonor(h, s){
   $('hName').textContent = $('h2Name').textContent = h.name;
   $('hHint').textContent = $('h2Hint').textContent = honorHint(h);
   $('hBar').style.width = $('h2Bar').style.width = h.pct + '%';
-  $('h2Sub').textContent = '榮譽點數 ' + h.total + ' 點・第 ' + h.level + '／' + h.maxLevel + ' 級・榮譽百分百摸彩券 ' + h.tickets + ' 張';
+  $('h2Sub').textContent = '榮譽點數 ' + h.total + ' 點・第 ' + h.level + '／' + h.maxLevel + ' 級・本學期摸彩券 ' + (h.termTickets == null ? h.tickets : h.termTickets) + ' 張';
+  if (s && s.ach) renderAch(s.ach, s);
   $('hTri').innerHTML = $('h2Tri').innerHTML = triHtml(h);
   $('h2Tiers').textContent = h.tiers.join('、');
   $('h2Ladder').innerHTML = h.levels.slice().reverse().map(function(l){
@@ -13308,6 +13329,31 @@ function renderHonor(h, s){
       setTimeout(function(){ levelUpShow(h); }, 400);
     }
   }
+}
+function renderAch(list, s){
+  var done = list.filter(function(a){ return a.done; });
+  $('h2AchN').textContent = done.length + '／' + list.length;
+  $('hHint').textContent = honorHint(s.honor) + (list.length ? '｜成就 ' + done.length + '／' + list.length : '');
+  $('h2Ach').innerHTML = list.map(function(a){
+    var pct = a.n ? Math.round(a.cur / a.n * 100) : 0;
+    return '<div class="a' + (a.done ? '' : ' off') + '"><div class="e">' + (a.done ? esc(a.icon) : '❓') + '</div><div class="t">' + esc(a.name) + '</div>' +
+      '<div class="d">' + esc(a.desc || '') + '</div>' + (a.done ? '<div class="d" style="color:var(--mint);font-weight:800">✓ 已解鎖</div>' : '<div class="pg"><i style="width:' + pct + '%"></i></div><div class="d">' + a.cur + '／' + a.n + ' ' + esc(a.unit) + '</div>') + '</div>';
+  }).join('') || '<div class="mute">目前沒有成就徽章</div>';
+  // 新解鎖的成就：第一次在這台裝置看到時慶祝（第一次使用只記錄，不一次跳出全部）
+  var key = 'pb_ach_' + s.classCode + '_' + s.seat, seen = null;
+  try { seen = JSON.parse(localStorage.getItem(key) || 'null'); } catch (e) {}
+  var codes = done.map(function(a){ return a.code; });
+  try { localStorage.setItem(key, JSON.stringify(codes)); } catch (e) {}
+  if (!seen) return;
+  var fresh = done.filter(function(a){ return seen.indexOf(a.code) < 0; });
+  if (fresh.length) setTimeout(function(){
+    if (document.querySelector('.celebrate')) return;
+    celebrate('成就解鎖！', '');
+    var box = document.querySelector('.celebrate .box');
+    if (!box) return;
+    box.querySelector('.em').textContent = fresh[0].icon;
+    box.children[2].innerHTML = '<div class="lvup">' + esc(fresh.map(function(a){ return a.name; }).join('、')) + '</div><div class="mute">' + esc(fresh[0].desc || '') + '</div>';
+  }, 1800);
 }
 function levelUpShow(h){
   if (document.querySelector('.celebrate')) return;
@@ -13494,6 +13540,7 @@ function loadRoster(){
     var ups = list.filter(function(s){ return s.newLevel; });
     $('tHonorUp').hidden = !ups.length;
     $('tHonorUp').innerHTML = ups.length ? '🎉 本週晉級（記得在班上表揚）：' + ups.map(function(s){ return s.seat + ' 號 ' + esc(s.levelName); }).join('、') : '';
+    loadFlag(cls);
     $('tSeats').innerHTML = list.map(function(s){
       return '<button class="seat' + (T.picked[s.seat] ? ' on' : '') + '" data-s="' + s.seat + '"><div class="n">' + s.seat + '</div><div class="nm">' + esc(s.name) + '</div><div class="b">' + s.balance + ' 點' + (s.card ? '' : '・無卡') + '</div>' + (s.level ? '<div class="lvtag" style="background:' + lvColor(s.level, HONOR_MAX) + '" title="' + esc(s.levelName) + '">Lv.' + s.level + '</div>' : '') + (s.newLevel ? '<span class="up" title="7 天內晉級">🎉</span>' : '') + '</button>';
     }).join('') || '<div class="empty">這班沒有在學學生</div>';
@@ -13502,6 +13549,14 @@ function loadRoster(){
     });
     updateGo();
   });
+}
+function loadFlag(cls){
+  $('tFlag').hidden = true;
+  gs('getClassFlag', [cls], function(f){
+    if (cls !== T.cls || !f) return;
+    $('tFlag').hidden = false;
+    $('tFlag').innerHTML = (f.top ? '🚩 <b>劍獅旗班級！</b>' : '🦁 班級劍獅旗') + '　全班平均 Lv.' + f.avgLevel.toFixed(1) + '（平均 ' + f.avgPoints + ' 點），' + f.grade + ' 年級第 ' + f.rank + '／' + f.of + ' 名' + (f.top ? '' : '。全班一起加油！');
+  }, function(){});
 }
 function pickedSeats(){ return T.roster.filter(function(s){ return T.picked[s.seat]; }).map(function(s){ return s.seat; }); }
 function pickAll(on){ T.picked = {}; if (on) T.roster.forEach(function(s){ T.picked[s.seat] = true; }); Array.prototype.forEach.call($('tSeats').children, function(b){ b.classList.toggle('on', !!on); }); updateGo(); }
