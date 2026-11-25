@@ -9,7 +9,7 @@
 <script>
 // 以背景 POST 取代 google.script.run（只開放學生端三個入口）
 (function () {
-  var API = "https://script.google.com/macros/s/AKfycbzMd88CNUlmotpBvWcKBGiLUavA6ExPa9esKmLd2raa5lHRLQ8DtJOWq37LYYvsAGBs/exec";
+  var API = "https://script.google.com/macros/s/AKfycbwO5oLAyjyJr7i6jkMaRIWXZm8p6GS-iDtNOfP-aIjsWRlfLbVkQ5TAJmdy7zjbosAWwA/exec";
   var FNS = ['loginInfo', 'studentLogin', 'studentCall'];
   function call(fn, args, ok, bad) {
     fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn: fn, args: args }), redirect: 'follow', credentials: 'omit' })
