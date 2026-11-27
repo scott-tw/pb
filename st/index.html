@@ -536,11 +536,12 @@ function pbPrintFoot(){ return '<div style="text-align:center;font-size:9pt;colo
     </div>
     <div class="card" id="tPcCard" hidden>
       <h2>💳 學生個人卡 <span class="mute" id="tPcInfo" style="font-weight:600"></span></h2>
-      <div class="mute">個人卡用來掃卡給點、到兌換站換獎品。補發或停用後舊卡立即失效，點數不受影響。卡號只在發卡時出現一次，請直接列印。</div>
+      <div class="mute">個人卡用來掃卡給點、到兌換站換獎品，印在標籤貼紙上貼聯絡簿。<b>補印</b>是同一張卡（卡號不變，換聯絡簿時用）；<b>補發</b>會換新卡號、舊卡立即失效，只在遺失時用。點數都不受影響。</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
         <button class="ghost small" onclick="loginQr()">🔑 學生登入 QR／解鎖</button>
         <button class="ghost small" onclick="pcIssue('missing')">發卡給還沒有卡的學生</button>
-        <button class="ghost small" onclick="pcIssue('picked')">補發已選學生的卡</button>
+        <button class="ghost small" onclick="pcReprint()">補印卡片（卡號不變）</button>
+        <button class="ghost small" onclick="pcIssue('picked')">補發已選學生的卡（遺失用）</button>
         <button class="ghost small" onclick="pcVoid()">停用已選學生的卡</button>
       </div>
     </div>
@@ -13072,6 +13073,17 @@ function findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, 
   .pc .t { margin-top:1mm; text-align:center; line-height:1.25; }
   .pc .t b { font-size:10pt; }
   .pc .code { font-family:ui-monospace,Menlo,Consolas,monospace; letter-spacing:.3mm; }
+  /* v27.6 個人卡 A4 標籤貼紙 */
+  .lpage { width:210mm; height:297mm; position:relative; overflow:hidden; page-break-after:always; break-after:page; }
+  .lpage:last-child { page-break-after:auto; break-after:auto; }
+  .lb { position:absolute; box-sizing:border-box; padding:3mm 4mm; display:flex; align-items:center; gap:2mm; color:#000; overflow:hidden; }
+  .lb img { image-rendering: pixelated; flex:none; }
+  .lb .t { line-height:1.3; font-size:7pt; min-width:0; }
+  .lb .t b { font-size:9.5pt; white-space:nowrap; }
+  .lb .t .nm { font-size:9.5pt; white-space:nowrap; }
+  .lb .t .code { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:6.5pt; white-space:nowrap; }
+  .lb .t .sm { font-size:6pt; color:#333; }
+  body.lguide .lb { outline:0.2mm dashed #bbb; outline-offset:-0.1mm; }
 </style>
 
 <script>
@@ -13208,7 +13220,7 @@ function sheet(title, html, okText, onOk){
   m.onclick = function(e){
     var x = e.target.dataset && e.target.dataset.x;
     if (e.target === m || x === '0') m.remove();
-    if (x === '1') { m.remove(); onOk(); }
+    if (x === '1') { m.remove(); onOk(m); }   // v27.6 把畫面傳給 onOk，讀取裡面的選項
   };
   document.body.appendChild(m);
 }
@@ -13656,20 +13668,30 @@ function confirmGive(){
 }
 
 // 個人卡（導師本班）
-function personalPrint(list){
-  return list.map(function(c){
-    return { qr: c.code, mm: 25, ecc: 'M', lines: ['<b>' + esc(c.classCode) + ' 班 ' + c.seat + ' 號</b>', esc(c.name), '校園點數銀行 個人卡', '<span class="code">' + fmtCode(c.code) + '</span>'] };
-  });
-}
 function pcIssue(mode){
   var seats = pickedSeats();
   if (mode === 'picked' && !seats.length) { toastErr('請先在上面點選要補發的學生'); return; }
   var text = mode === 'missing' ? '發卡給 ' + T.cls + ' 班還沒有個人卡的學生' : '補發 ' + seats.length + ' 位學生的卡（舊卡立即作廢）';
-  sheet('個人卡', '<div class="sum">' + esc(text) + '<br><span class="mute">卡號只會出現這一次，發卡後會直接開啟列印。</span></div>', '發卡並列印', function(){
+  sheet('個人卡', '<div class="sum">' + esc(text) + '<br><span class="mute">發卡後會直接開啟列印，之後也可以用「補印」再印同一張。</span></div>' + labelOptions('t'), '發卡並列印', function(m){
+    var opt = labelPick('t', m);
     gs('issuePersonalCards', [mode === 'missing' ? { classCode: T.cls, seats: 'all', onlyMissing: true } : { classCode: T.cls, seats: seats }], function(r){
       if (!r.cards.length) { toast('全班都已經有卡了'); return; }
       toast('已發 ' + r.cards.length + ' 張' + (r.voided ? '，作廢舊卡 ' + r.voided + ' 張' : ''));
-      printCards(personalPrint(r.cards)); loadRoster();
+      printLabels(r.cards, opt); loadRoster();
+    });
+  });
+}
+function pcReprint(){
+  var seats = pickedSeats();
+  var text = seats.length ? '補印 ' + seats.length + ' 位已選學生的卡' : '補印 ' + T.cls + ' 班全班的卡';
+  sheet('補印個人卡', '<div class="sum">' + esc(text) + '<br><span class="mute">卡號不變，舊卡照常能用。要只印幾位，先在上面點選學生。</span></div>' + labelOptions('t'), '列印', function(m){
+    var opt = labelPick('t', m);
+    gs('reprintPersonalCards', [{ classCode: T.cls, seats: seats.length ? seats : 'all' }], function(r){
+      var msg = '補印 ' + r.cards.length + ' 張';
+      if (r.old.length) msg += '；' + r.old.map(function(s){ return s.seat; }).join('、') + ' 號是舊版的卡，請改用「補發」';
+      if (r.none.length) msg += '；' + r.none.map(function(s){ return s.seat; }).join('、') + ' 號還沒有卡';
+      (r.old.length ? toastErr : toast)(msg);
+      if (r.cards.length) printLabels(r.cards, opt);
     });
   });
 }
@@ -13966,6 +13988,53 @@ function printCards(cards){
   $('printSheet').innerHTML = html;
   document.body.classList.add('printing');
   setTimeout(function(){ window.print(); document.body.classList.remove('printing'); }, 400);
+}
+// ── v27.6 個人卡 A4 標籤貼紙（每格：QR＋班級座號＋姓名＋卡號）──
+var LABELS = {
+  L40: { name: '40 格（最小，每格 5.2×3 公分）', cols: 4, rows: 10, w: 52.5, h: 29.7, mt: 0, ml: 0 },
+  L24: { name: '24 格（每格 7×3.7 公分）', cols: 3, rows: 8, w: 70, h: 37, mt: 0.5, ml: 0 },
+  L21: { name: '21 格（每格 7×4.2 公分）', cols: 3, rows: 7, w: 70, h: 42.3, mt: 0.4, ml: 0 },
+  CARD: { name: '一般 A4 紙（印好再剪下）', cols: 4, rows: 6, w: 48.75, h: 46, mt: 10, ml: 7.5 }
+};
+function lblSaved(){ var v = null; try { v = localStorage.getItem('pb_label'); } catch(e) {} return LABELS[v] ? v : 'L40'; }
+/** 標籤紙選項（放進確認畫面或卡片裡）；id 前綴 p 讓同一頁可以有多組 */
+function labelOptions(p){
+  var cur = lblSaved();
+  return '<div style="display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-top:8px;text-align:left"><div><div class="mute">列印格式</div><select id="' + p + 'Fmt" style="width:100%">' +
+    Object.keys(LABELS).map(function(k){ return '<option value="' + k + '"' + (k === cur ? ' selected' : '') + '>' + LABELS[k].name + '</option>'; }).join('') +
+    '</select></div><div><div class="mute">從第幾格開始</div><input type="number" id="' + p + 'Start" min="1" max="40" step="1" value="1" style="width:100%"></div></div>' +
+    '<div class="mute" style="text-align:left">用過一部分的標籤紙，可以從空白的那一格開始印。列印時「縮放」請選「實際大小／100%」、邊界選「無」；想存檔就在列印畫面選「另存為 PDF」。</div>';
+}
+function labelPick(p, root){
+  root = root || document;
+  var f = root.querySelector('#' + p + 'Fmt'), s = root.querySelector('#' + p + 'Start');
+  var fmt = f && LABELS[f.value] ? f.value : lblSaved();
+  try { localStorage.setItem('pb_label', fmt); } catch(e) {}
+  var per = LABELS[fmt].cols * LABELS[fmt].rows, n = Math.floor(Number(s && s.value) || 1);
+  return { fmt: fmt, start: Math.min(Math.max(n, 1), per) };
+}
+/** list：[{classCode, seat, name, code}]；opt：labelPick() 的結果 */
+function printLabels(list, opt){
+  if (typeof qrcode !== 'function') { alert('QR 函式庫未載入，請重新整理頁面。'); return; }
+  opt = opt || { fmt: lblSaved(), start: 1 };
+  var L = LABELS[opt.fmt] || LABELS.L40, per = L.cols * L.rows;
+  var qr = Math.min(L.h - 7, 24), cells = [];
+  for (var i = 1; i < opt.start; i++) cells.push(null);
+  list.forEach(function(c){ cells.push(c); });
+  var html = '';
+  for (var p = 0; p < cells.length; p += per) {
+    html += '<div class="lpage">' + cells.slice(p, p + per).map(function(c, k){
+      if (!c) return '';
+      var col = k % L.cols, row = Math.floor(k / L.cols);
+      var style = 'left:' + (L.ml + col * L.w) + 'mm;top:' + (L.mt + row * L.h) + 'mm;width:' + L.w + 'mm;height:' + L.h + 'mm';
+      return '<div class="lb" style="' + style + '">' + qrImg(c.code, qr, 'M') + '<div class="t"><b>' + esc(c.classCode) + ' 班 ' + c.seat + ' 號</b><br>' +
+        '<span class="nm">' + esc(c.name) + '</span><br><span class="sm">校園點數銀行</span><br><span class="code">' + fmtCode(c.code) + '</span></div></div>';
+    }).join('') + '</div>';
+  }
+  $('printSheet').innerHTML = html;
+  document.body.classList.add('printing');
+  document.body.classList.toggle('lguide', opt.fmt === 'CARD');
+  setTimeout(function(){ window.print(); document.body.classList.remove('printing'); document.body.classList.remove('lguide'); }, 400);
 }
 function activityPrint(r){
   var base = r.url + (r.url.indexOf('?') >= 0 ? '&' : '?') + 'k=';
